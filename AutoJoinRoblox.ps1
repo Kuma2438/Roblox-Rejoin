@@ -6,6 +6,24 @@ $script:monitoring = $false
 $script:launching = $false
 $script:everSeenRoblox = $false
 $script:lastLaunch = [datetime]::MinValue
+$script:internetDownChecks = 0
+$script:internetUpChecks = 0
+$script:internetDown = $false
+
+function Test-InternetConnection {
+    $client = New-Object System.Net.Sockets.TcpClient
+    try {
+        $pending = $client.BeginConnect('1.1.1.1', 443, $null, $null)
+        if (-not $pending.AsyncWaitHandle.WaitOne(2500, $false)) { return $false }
+        $client.EndConnect($pending)
+        return $client.Connected
+    } catch {
+        return $false
+    } finally {
+        $client.Close()
+    }
+}
+
 $form = New-Object Windows.Forms.Form
 $form.Text = 'Roblox Auto Rejoin'
 $form.Size = New-Object Drawing.Size(520,300)
@@ -37,7 +55,7 @@ $timer.Interval = $intervalSeconds * 1000
 $launchGame = {
     if ($script:launching) { return }
     $script:launching = $true; $script:lastLaunch = Get-Date
-    $detail.Text = 'กำลังเปิดลิงก์เกม Roblox...'
+    $detail.Text = 'กำลังเรียก Roblox ให้เข้าเกม...'
     try { Start-Process $url } catch { $detail.Text = 'เปิดลิงก์ไม่สำเร็จ: ' + $_.Exception.Message }
     $until = (Get-Date).AddSeconds(20)
     while ((Get-Date) -lt $until) {
@@ -60,10 +78,46 @@ $stop.Add_Click({
 })
 $timer.Add_Tick({
     if (-not $script:monitoring -or $script:launching) { return }
+
+    if (Test-InternetConnection) {
+        $script:internetDownChecks = 0
+        if ($script:internetDown) {
+            $script:internetUpChecks++
+            $detail.Text = 'เน็ตกลับมาแล้ว กำลังตรวจยืนยันการเชื่อมต่อ...'
+            if ($script:internetUpChecks -lt 2) { return }
+
+            $script:internetDown = $false
+            $script:internetUpChecks = 0
+            $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
+            if ($players.Count -gt 0) {
+                $detail.Text = 'เน็ตกลับมาแล้ว กำลังเริ่ม Roblox ใหม่เพื่อเชื่อมต่อเกม...'
+                $players | Stop-Process -Force -ErrorAction SilentlyContinue
+                Start-Sleep -Seconds 2
+            } else {
+                $detail.Text = 'เน็ตกลับมาแล้ว กำลังเข้าเกม...'
+            }
+            $script:everSeenRoblox = $false
+            & $launchGame
+            return
+        }
+    } else {
+        $script:internetUpChecks = 0
+        $script:internetDownChecks++
+        if ($script:internetDownChecks -ge 3) {
+            $script:internetDown = $true
+            $detail.Text = 'ตรวจพบว่าอินเทอร์เน็ตขาด กำลังรอให้กลับมา...'
+        } else {
+            $detail.Text = 'กำลังตรวจสอบการเชื่อมต่ออินเทอร์เน็ต...'
+        }
+        return
+    }
+
+    if ($script:internetDown) { return }
+
     $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
     if ($players.Count -gt 0) {
         $script:everSeenRoblox = $true
-        $detail.Text = 'พบ Roblox Player กำลังทำงาน ตรวจสอบทุก 10 วินาที'
+        $detail.Text = 'อินเทอร์เน็ตปกติ พบ Roblox Player กำลังทำงาน'
         return
     }
     if (-not $script:everSeenRoblox -and ((Get-Date) - $script:lastLaunch).TotalSeconds -lt 90) {
