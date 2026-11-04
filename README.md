@@ -1,43 +1,55 @@
 # Roblox Auto Rejoin — Anime Adventures
 
-โปรแกรม Windows พร้อมหน้าต่างภาษาไทย สำหรับเรียกเข้าเกม Anime Adventures และเฝ้าดู Roblox Player/อินเทอร์เน็ต หากตัวเกมปิดหรือเน็ตหลุด โปรแกรมจะพยายามพากลับเข้าเกมอัตโนมัติ
+## ภาษาไทย
 
-## เกม
+โปรแกรม Windows สำหรับเข้าเกม **Anime Adventures** และเฝ้าดูการทำงานของ Roblox Player กับการเชื่อมต่ออินเทอร์เน็ต เมื่อ Roblox ปิดหรืออินเทอร์เน็ตขาดแล้วกลับมา โปรแกรมจะพยายามเข้าเกมใหม่
 
-- ชื่อ: Anime Adventures
-- Place ID: `8304191830`
-- Deep link: `roblox://placeId=8304191830`
+### วิธีใช้งาน
 
-โปรแกรมใช้ Roblox deep link แบบ Direct to app เพื่อเปิด Roblox โดยตรง โดยไม่เปิดหน้าเกมในเบราว์เซอร์ (อ้างอิง [Roblox Creator Hub: Deep links](https://create.roblox.com/docs/production/promotion/deeplinks))
-
-## วิธีใช้งาน
-
-1. ติดตั้ง Roblox Player และล็อกอินบัญชี Roblox
-2. ดาวน์โหลดไฟล์จาก repository นี้ โดยกด **Code → Download ZIP** แล้วแตกไฟล์
+1. ติดตั้ง Roblox Player และเข้าสู่ระบบ
+2. ดาวน์โหลด ZIP จาก GitHub แล้วแตกไฟล์
 3. ดับเบิลคลิก `Start Auto Join.bat`
-4. กด **เริ่มเฝ้าดูและเข้าเกม**
-5. กด **หยุด** ในหน้าต่างโปรแกรมเมื่อต้องการหยุดเฝ้าดู
+4. กด **เริ่มเฝ้าดูและเข้าเกม** โปรแกรมจะตรวจ Roblox Player ก่อน หากเกมเปิดอยู่แล้วจะไม่เปิดซ้ำ
+5. ใช้ปุ่ม **EN / ไทย** ที่มุมขวาบนเพื่อเปลี่ยนภาษา
+6. กด **หยุดเฝ้าดู** เมื่อต้องการหยุด
 
-หาก Windows ถามว่าจะเปิด Roblox หรือไม่ ให้กดยืนยัน
+### สถานะและการเชื่อมต่อ
 
-## ไฟล์
+- ไฟอินเทอร์เน็ตสีเขียว/แดงแสดงผลการตรวจการเชื่อมต่อไปยัง Cloudflare (1.1.1.1:443)
+- ไฟ Roblox Player สีเขียวหมายถึงพบโปรเซส Roblox Player ทำงานอยู่ สีแดงหมายถึงไม่พบโปรเซส โปรแกรมไม่สามารถยืนยันสถานะการเชื่อมต่อเซิร์ฟเวอร์จากโปรเซสเพียงอย่างเดียว
+- ตรวจทุก 10 วินาที หากเน็ตขาด 3 ครั้งติดกัน จะรอจนกลับมาปกติ 2 ครั้งติดกัน แล้วเริ่มเกมใหม่
+- หากเน็ตหลุด โปรแกรมจะปิด Roblox Player ที่ค้างอยู่เมื่อเน็ตกลับมา เพื่อให้เชื่อมต่อใหม่
+- หาก Windows ถามว่าจะเปิด Roblox หรือไม่ ให้กดยืนยัน และต้องล็อกอิน Roblox ไว้แล้ว
 
-- `AutoJoinRoblox.ps1` — หน้าต่างควบคุมและตัวตรวจ Roblox Player
-- `Start Auto Join.bat` — ตัวเริ่มโปรแกรม
+### ไฟล์ในโปรแกรม
+
+- `AutoJoinRoblox.ps1` — โปรแกรมพร้อมหน้าต่างควบคุม
+- `Start Auto Join.bat` — ตัวเปิดโปรแกรม
 - `วิธีใช้งาน.txt` — คู่มือภาษาไทย
 
-ไฟล์สคริปต์และคู่มือบันทึกเป็น UTF-8 พร้อม BOM เพื่อรองรับภาษาไทยใน Windows PowerShell
+## English
 
-## ข้อจำกัด
+A Windows utility that launches **Anime Adventures** and monitors Roblox Player and internet connectivity. It attempts to rejoin the experience if Roblox closes or the internet disconnects and comes back.
 
-- หน้าโปรแกรมแสดงไฟสถานะอินเทอร์เน็ตและ Roblox Player: สีเขียวคือออนไลน์/กำลังทำงาน และสีแดงคือออฟไลน์/ไม่พบโปรเซส Roblox Player. สถานะ Roblox อิงจากการทำงานของโปรเซส ไม่สามารถยืนยันได้ว่าตัวละครเชื่อมต่อกับเซิร์ฟเวอร์อยู่
-- โปรแกรมตรวจว่า Roblox Player ทำงานอยู่หรือปิดไปแล้ว โดยตรวจทุก 10 วินาที
-- โปรแกรมตรวจอินเทอร์เน็ตผ่านการเชื่อมต่อ TCP ไปยัง Cloudflare (1.1.1.1:443) ทุก 10 วินาที หากตรวจพบว่าขาด 3 ครั้งติดกัน จะรอจนกลับมาปกติ 2 ครั้งติดกัน แล้วปิด Roblox Player ที่ค้างอยู่และเปิดเกมใหม่
-- หากการเชื่อมต่อเกมหลุด แต่ Roblox Player ยังเปิดค้าง โปรแกรมอาจตรวจไม่พบและไม่สามารถยืนยันสถานะภายในเกมได้
-- การเข้าเกมต้องอาศัย Roblox Player ที่ติดตั้งและล็อกอินไว้แล้ว การยืนยันสิทธิ์หรือหน้าต่างแจ้งเตือนของ Windows อาจต้องกดเอง
-- โปรแกรมจะปิด Roblox Player เฉพาะเมื่อตรวจพบว่าเน็ตหลุดแล้วกลับมา เพื่อให้เชื่อมต่อใหม่ และไม่อ่านหรือจัดเก็บรหัสผ่าน/ข้อมูลล็อกอิน
-- ใช้งานได้เมื่อหน้าต่างโปรแกรมยังเปิดอยู่
+### How to use
 
-## ความเป็นส่วนตัว
+1. Install Roblox Player and sign in.
+2. Download the repository ZIP and extract it.
+3. Double-click `Start Auto Join.bat`.
+4. Click **Start monitoring**. The app checks for an existing Roblox Player first and will not launch a duplicate.
+5. Use the **EN / ไทย** button in the top-right corner to switch languages.
+6. Click **Stop monitoring** when you want to stop.
 
-โปรแกรมไม่มีการส่งข้อมูลผู้ใช้ไปยังผู้พัฒนา ไม่มีการเก็บข้อมูลบัญชี และไม่ต้องใช้ API key
+### Status and connectivity
+
+- The green/red Internet light shows whether the app can reach Cloudflare (1.1.1.1:443).
+- The green Roblox Player light means the Roblox Player process is running; red means it was not found. A running process alone does not confirm that the game server connection is active.
+- Checks run every 10 seconds. After 3 consecutive failed internet checks, the app waits for 2 consecutive successful checks, then launches the game again.
+- If Roblox is still open after the outage, the app closes that Roblox Player process after the connection returns so it can reconnect.
+- If Windows asks to open Roblox, confirm the prompt. Roblox must already be signed in.
+
+### Included files
+
+- `AutoJoinRoblox.ps1` — app and control window
+- `Start Auto Join.bat` — app launcher
+- `วิธีใช้งาน.txt` — Thai user guide

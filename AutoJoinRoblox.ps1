@@ -2,6 +2,10 @@
 Add-Type -AssemblyName System.Drawing
 
 $url = 'roblox://placeId=8304191830'
+$script:language = 'th'
+$script:internetOnline = $false
+$script:robloxOnline = $false
+function T([string]$th, [string]$en) { if ($script:language -eq 'en') { return $en }; return $th }
 $intervalSeconds = 10
 $script:monitoring = $false
 $script:launching = $false
@@ -34,13 +38,15 @@ function Set-Status([string]$main, [string]$detail, [string]$color) {
     $detailLabel.Text = $detail
 }
 function Set-InternetLamp([bool]$online, [string]$detail) {
-    if ($online) { $internetLamp.Text = '● ออนไลน์'; $internetLamp.ForeColor = [Drawing.Color]::FromArgb(28,153,96) }
-    else { $internetLamp.Text = '● ออฟไลน์'; $internetLamp.ForeColor = [Drawing.Color]::FromArgb(210,65,70) }
+    $script:internetOnline = $online
+    if ($online) { $internetLamp.Text = T '● ออนไลน์' '● Online'; $internetLamp.ForeColor = [Drawing.Color]::FromArgb(28,153,96) }
+    else { $internetLamp.Text = T '● ออฟไลน์' '● Offline'; $internetLamp.ForeColor = [Drawing.Color]::FromArgb(210,65,70) }
     $internetDetail.Text = $detail
 }
 function Set-RobloxLamp([bool]$online, [string]$detail) {
-    if ($online) { $robloxLamp.Text = '● ออนไลน์'; $robloxLamp.ForeColor = [Drawing.Color]::FromArgb(28,153,96) }
-    else { $robloxLamp.Text = '● ออฟไลน์'; $robloxLamp.ForeColor = [Drawing.Color]::FromArgb(210,65,70) }
+    $script:robloxOnline = $online
+    if ($online) { $robloxLamp.Text = T '● ออนไลน์' '● Online'; $robloxLamp.ForeColor = [Drawing.Color]::FromArgb(28,153,96) }
+    else { $robloxLamp.Text = T '● ออฟไลน์' '● Offline'; $robloxLamp.ForeColor = [Drawing.Color]::FromArgb(210,65,70) }
     $robloxDetail.Text = $detail
 }
 
@@ -74,8 +80,21 @@ $subtitle.Text = 'เฝ้าดูการเชื่อมต่อ แล�
 $subtitle.Font = New-Object Drawing.Font('Segoe UI',10)
 $subtitle.ForeColor = [Drawing.Color]::FromArgb(205,215,232)
 $subtitle.Location = New-Object Drawing.Point(30,61)
-$subtitle.Size = New-Object Drawing.Size(630,24)
+$subtitle.Size = New-Object Drawing.Size(585,24)
 $header.Controls.Add($subtitle)
+
+$languageButton = New-Object Windows.Forms.Button
+$languageButton.Text = 'EN'
+$languageButton.Location = New-Object Drawing.Point(672,22)
+$languageButton.Size = New-Object Drawing.Size(64,34)
+$languageButton.FlatStyle = 'Flat'
+$languageButton.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(120,139,170)
+$languageButton.BackColor = [Drawing.Color]::FromArgb(43,59,91)
+$languageButton.ForeColor = [Drawing.Color]::White
+$languageButton.Font = New-Object Drawing.Font('Segoe UI Semibold',9,[Drawing.FontStyle]::Bold)
+$languageButton.Cursor = 'Hand'
+$header.Controls.Add($languageButton)
+
 
 $gameCard = New-Object Windows.Forms.Panel
 $gameCard.Location = New-Object Drawing.Point(24,122)
@@ -160,7 +179,7 @@ $start.Cursor = 'Hand'
 $form.Controls.Add($start)
 
 $stop = New-Object Windows.Forms.Button
-$stop.Text = 'หยุดเฝ้าดู'
+$stop.Text = (T 'หยุดเฝ้าดู' 'Monitoring stopped')
 $stop.Location = New-Object Drawing.Point(266,526)
 $stop.Size = New-Object Drawing.Size(125,42)
 $stop.FlatStyle = 'Flat'
@@ -210,7 +229,7 @@ $internetLamp.Size = New-Object Drawing.Size(300,30)
 $internetCard.Controls.Add($internetLamp)
 
 $internetDetail = New-Object Windows.Forms.Label
-$internetDetail.Text = 'รอเริ่มตรวจสอบ'
+$internetDetail.Text = (T 'รอเริ่มตรวจสอบ' 'Waiting to start monitoring')
 $internetDetail.Font = New-Object Drawing.Font('Segoe UI',8)
 $internetDetail.ForeColor = [Drawing.Color]::FromArgb(125,135,150)
 $internetDetail.Location = New-Object Drawing.Point(18,68)
@@ -240,12 +259,37 @@ $robloxLamp.Size = New-Object Drawing.Size(300,30)
 $robloxCard.Controls.Add($robloxLamp)
 
 $robloxDetail = New-Object Windows.Forms.Label
-$robloxDetail.Text = 'รอเริ่มตรวจสอบ'
+$robloxDetail.Text = (T 'รอเริ่มตรวจสอบ' 'Waiting to start monitoring')
 $robloxDetail.Font = New-Object Drawing.Font('Segoe UI',8)
 $robloxDetail.ForeColor = [Drawing.Color]::FromArgb(125,135,150)
 $robloxDetail.Location = New-Object Drawing.Point(18,68)
 $robloxDetail.Size = New-Object Drawing.Size(300,18)
 $robloxCard.Controls.Add($robloxDetail)
+
+
+function Apply-Language {
+    $subtitle.Text = T 'เฝ้าดูการเชื่อมต่อ และพากลับเข้า Anime Adventures อัตโนมัติ' 'Monitor your connection and automatically rejoin Anime Adventures'
+    $gameId.Text = T 'เกม Roblox  •  Place ID 8304191830' 'Roblox experience  •  Place ID 8304191830'
+    $internetHeading.Text = T 'อินเทอร์เน็ต' 'INTERNET'
+    $robloxHeading.Text = 'ROBLOX PLAYER'
+    $logTitle.Text = T 'บันทึกกิจกรรม' 'Activity log'
+    $start.Text = T 'เริ่มเฝ้าดูและเข้าเกม' 'Start monitoring'
+    $stop.Text = T 'หยุดเฝ้าดู' 'Stop monitoring'
+    $footer.Text = T 'ตรวจ Roblox และอินเทอร์เน็ตทุก 10 วินาที' 'Checks Roblox and internet every 10 seconds'
+    $languageButton.Text = if ($script:language -eq 'th') { 'EN' } else { 'ไทย' }
+    Set-InternetLamp $script:internetOnline (T 'สถานะการเชื่อมต่ออินเทอร์เน็ต' 'Internet connection status')
+    Set-RobloxLamp $script:robloxOnline (T 'สถานะ Roblox Player' 'Roblox Player status')
+    if ($script:monitoring) {
+        Set-Status (T 'กำลังเฝ้าดู' 'Monitoring') (T 'กำลังตรวจสอบ Roblox และอินเทอร์เน็ต' 'Checking Roblox and internet connection') 'SeaGreen'
+    } else {
+        Set-Status (T 'หยุดทำงาน' 'Stopped') (T 'กดปุ่มด้านล่างเพื่อเริ่มเฝ้าดูและเข้าเกม' 'Press the button below to start monitoring and launch the game') 'Gray'
+    }
+}
+$languageButton.Add_Click({
+    if ($script:language -eq 'th') { $script:language = 'en' } else { $script:language = 'th' }
+    Apply-Language
+    Add-Activity (T 'เปลี่ยนภาษาแล้ว' 'Language changed')
+})
 
 $timer = New-Object Windows.Forms.Timer
 $timer.Interval = $intervalSeconds * 1000
@@ -253,11 +297,11 @@ $launchGame = {
     if ($script:launching) { return }
     $script:launching = $true
     $script:lastLaunch = Get-Date
-    Set-Status 'กำลังเปิดเกม' 'กำลังเรียก Roblox เพื่อเข้า Anime Adventures...' 'DodgerBlue'
-    Add-Activity 'กำลังเรียก Roblox ให้เข้าเกม'
+    Set-Status (T 'กำลังเปิดเกม' 'Launching game') (T 'กำลังเรียก Roblox เพื่อเข้า Anime Adventures...' 'Opening Roblox to join Anime Adventures...') 'DodgerBlue'
+    Add-Activity (T 'กำลังเรียก Roblox ให้เข้าเกม' 'Opening Roblox to join the game')
     try { Start-Process $url } catch {
-        Set-Status 'เปิดเกมไม่สำเร็จ' $_.Exception.Message 'Tomato'
-        Add-Activity ('เปิดลิงก์ไม่สำเร็จ: ' + $_.Exception.Message)
+        Set-Status (T 'เปิดเกมไม่สำเร็จ' 'Could not launch game') $_.Exception.Message 'Tomato'
+        Add-Activity ((T 'เปิดลิงก์ไม่สำเร็จ: ' 'Could not open link: ') + $_.Exception.Message)
     }
     $until = (Get-Date).AddSeconds(20)
     while ((Get-Date) -lt $until) {
@@ -273,71 +317,71 @@ $start.Add_Click({
     $script:internetDown = $false
     $script:internetDownChecks = 0
     $script:internetUpChecks = 0
-    Set-InternetLamp $false 'กำลังตรวจสอบ...'
-    Set-RobloxLamp $false 'กำลังเปิดเกม...'
+    Set-InternetLamp $false (T 'กำลังตรวจสอบ...' 'Checking...')
+    Set-RobloxLamp $false (T 'กำลังเปิดเกม...' 'Launching game...')
     $start.Enabled = $false
     $stop.Enabled = $true
     $timer.Start()
-    Add-Activity 'เริ่มเฝ้าดู Roblox และอินเทอร์เน็ต'
+    Add-Activity (T 'เริ่มเฝ้าดู Roblox และอินเทอร์เน็ต' 'Started monitoring Roblox and internet')
     $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
     if ($players.Count -gt 0) {
         $script:everSeenRoblox = $true
-        Set-RobloxLamp $true 'พบ Roblox Player กำลังทำงาน'
-        Set-Status 'กำลังเฝ้าดู' 'พบเกมที่เปิดอยู่แล้ว จะไม่เปิดซ้ำเพื่อไม่รบกวนการเล่น' 'SeaGreen'
-        Add-Activity 'พบ Roblox Player ที่เปิดอยู่แล้ว ข้ามการเปิดเกมใหม่'
-        Set-InternetLamp (Test-InternetConnection) 'ตรวจพบสถานะอินเทอร์เน็ต'
+        Set-RobloxLamp $true (T 'พบ Roblox Player กำลังทำงาน' 'Roblox Player is running')
+        Set-Status (T 'กำลังเฝ้าดู' 'Monitoring') (T 'พบเกมที่เปิดอยู่แล้ว จะไม่เปิดซ้ำเพื่อไม่รบกวนการเล่น' 'An existing game was found. It will not be launched again.') 'SeaGreen'
+        Add-Activity (T 'พบ Roblox Player ที่เปิดอยู่แล้ว ข้ามการเปิดเกมใหม่' 'Existing Roblox Player found; skipped relaunch')
+        Set-InternetLamp (Test-InternetConnection) (T 'ตรวจพบสถานะอินเทอร์เน็ต' 'Internet status checked')
         return
     }
-    Set-RobloxLamp $false 'ไม่พบ Roblox Player กำลังเข้าเกม'
+    Set-RobloxLamp $false (T 'ไม่พบ Roblox Player กำลังเข้าเกม' 'Roblox Player not found; launching game')
     & $launchGame
 })
 $stop.Add_Click({
     $script:monitoring = $false
     $timer.Stop()
-    Set-Status 'หยุดเฝ้าดู' 'Roblox ที่กำลังเปิดอยู่จะไม่ถูกปิด' 'Gray'
+    Set-Status (T 'หยุดเฝ้าดู' 'Monitoring stopped') (T 'Roblox ที่กำลังเปิดอยู่จะไม่ถูกปิด' 'The currently running Roblox Player will not be closed') 'Gray'
     $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
-    Set-RobloxLamp ($players.Count -gt 0) $(if ($players.Count -gt 0) { 'Roblox Player ยังทำงาน' } else { 'ไม่พบ Roblox Player' })
-    Add-Activity 'หยุดเฝ้าดูแล้ว'
+    Set-RobloxLamp ($players.Count -gt 0) $(if ($players.Count -gt 0) { (T 'Roblox Player ยังทำงาน' 'Roblox Player is still running') } else { (T 'ไม่พบ Roblox Player' 'Roblox Player not found') })
+    Add-Activity (T 'หยุดเฝ้าดูแล้ว' 'Stopped monitoring')
     $start.Enabled = $true
     $stop.Enabled = $false
 })
 $timer.Add_Tick({
     if (-not $script:monitoring -or $script:launching) { return }
     $currentPlayers = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
-    if ($currentPlayers.Count -gt 0) { Set-RobloxLamp $true 'พบ Roblox Player กำลังทำงาน' }
-    else { Set-RobloxLamp $false 'ไม่พบ Roblox Player' }
+    if ($currentPlayers.Count -gt 0) { Set-RobloxLamp $true (T 'พบ Roblox Player กำลังทำงาน' 'Roblox Player is running') }
+    else { Set-RobloxLamp $false (T 'ไม่พบ Roblox Player' 'Roblox Player not found') }
     if (Test-InternetConnection) {
-        Set-InternetLamp $true 'เชื่อมต่ออินเทอร์เน็ตได้'
+        Set-InternetLamp $true (T 'เชื่อมต่ออินเทอร์เน็ตได้' 'Internet connection available')
         $script:internetDownChecks = 0
         if ($script:internetDown) {
             $script:internetUpChecks++
-            Set-Status 'กำลังตรวจเน็ต' 'เน็ตกลับมาแล้ว กำลังยืนยันความเสถียร...' 'DarkOrange'
+            Set-Status (T 'กำลังตรวจเน็ต' 'Checking internet') (T 'เน็ตกลับมาแล้ว กำลังยืนยันความเสถียร...' 'Internet is back; checking stability...') 'DarkOrange'
             if ($script:internetUpChecks -lt 2) { return }
             $script:internetDown = $false
             $script:internetUpChecks = 0
             $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
             if ($players.Count -gt 0) {
-                Add-Activity 'เน็ตกลับมาแล้ว ปิด Roblox Player ที่ค้างเพื่อเชื่อมต่อใหม่'
+                Add-Activity (T 'เน็ตกลับมาแล้ว ปิด Roblox Player ที่ค้างเพื่อเชื่อมต่อใหม่' 'Internet restored; restarting Roblox Player to reconnect')
                 $players | Stop-Process -Force -ErrorAction SilentlyContinue
-                Set-RobloxLamp $false 'กำลังเริ่มเกมใหม่หลังเน็ตกลับมา'
+                Set-RobloxLamp $false (T 'กำลังเริ่มเกมใหม่หลังเน็ตกลับมา' 'Restarting game after internet recovery')
                 Start-Sleep -Seconds 2
             } else {
-                Add-Activity 'เน็ตกลับมาแล้ว กำลังเปิดเกม'
+                Add-Activity (T 'เน็ตกลับมาแล้ว กำลังเปิดเกม' 'Internet restored; launching game')
             }
             $script:everSeenRoblox = $false
             & $launchGame
             return
         }
     } else {
-        Set-InternetLamp $false 'ไม่สามารถเชื่อมต่อปลายทางตรวจสอบได้'
+        Set-InternetLamp $false (T 'ไม่สามารถเชื่อมต่อปลายทางตรวจสอบได้' 'Cannot reach the connectivity check endpoint')
         $script:internetUpChecks = 0
         $script:internetDownChecks++
         if ($script:internetDownChecks -ge 3) {
-            if (-not $script:internetDown) { Add-Activity 'ตรวจพบอินเทอร์เน็ตขาด กำลังรอการเชื่อมต่อกลับมา' }
+            if (-not $script:internetDown) { Add-Activity (T 'ตรวจพบอินเทอร์เน็ตขาด กำลังรอการเชื่อมต่อกลับมา' 'Internet connection lost; waiting for it to return') }
             $script:internetDown = $true
-            Set-Status 'อินเทอร์เน็ตขาด' 'กำลังรอให้เน็ตกลับมา แล้วจะเข้าเกมใหม่อัตโนมัติ' 'Tomato'
+            Set-Status (T 'อินเทอร์เน็ตขาด' 'Internet disconnected') (T 'กำลังรอให้เน็ตกลับมา แล้วจะเข้าเกมใหม่อัตโนมัติ' 'Waiting for internet; the game will rejoin automatically') 'Tomato'
         } else {
-            Set-Status 'กำลังตรวจสอบเน็ต' 'ยังเชื่อมต่อไม่ได้ กำลังตรวจซ้ำ...' 'DarkOrange'
+            Set-Status (T 'กำลังตรวจสอบเน็ต' 'Checking internet') (T 'ยังเชื่อมต่อไม่ได้ กำลังตรวจซ้ำ...' 'No connection yet; checking again...') 'DarkOrange'
         }
         return
     }
@@ -345,22 +389,23 @@ $timer.Add_Tick({
     $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
     if ($players.Count -gt 0) {
         $script:everSeenRoblox = $true
-        Set-RobloxLamp $true 'พบ Roblox Player กำลังทำงาน'
-        Set-Status 'กำลังเฝ้าดู' 'อินเทอร์เน็ตปกติ และพบ Roblox Player กำลังทำงาน' 'SeaGreen'
+        Set-RobloxLamp $true (T 'พบ Roblox Player กำลังทำงาน' 'Roblox Player is running')
+        Set-Status (T 'กำลังเฝ้าดู' 'Monitoring') (T 'อินเทอร์เน็ตปกติ และพบ Roblox Player กำลังทำงาน' 'Internet is connected and Roblox Player is running') 'SeaGreen'
         return
     }
-    Set-RobloxLamp $false 'ไม่พบ Roblox Player'
+    Set-RobloxLamp $false (T 'ไม่พบ Roblox Player' 'Roblox Player not found')
     if (-not $script:everSeenRoblox -and ((Get-Date) - $script:lastLaunch).TotalSeconds -lt 90) {
-        Set-Status 'กำลังเข้าเกม' 'รอ Roblox Player เริ่มทำงาน...' 'DodgerBlue'
+        Set-Status (T 'กำลังเข้าเกม' 'Joining game') (T 'รอ Roblox Player เริ่มทำงาน...' 'Waiting for Roblox Player to start...') 'DodgerBlue'
         return
     }
     if (((Get-Date) - $script:lastLaunch).TotalSeconds -ge 30) {
-        Add-Activity 'ไม่พบ Roblox Player กำลังลองเข้าเกมใหม่'
+        Add-Activity (T 'ไม่พบ Roblox Player กำลังลองเข้าเกมใหม่' 'Roblox Player not found; trying to rejoin')
         & $launchGame
     }
 })
 $form.Add_FormClosing({ $timer.Stop() })
-Set-InternetLamp $false 'รอเริ่มตรวจสอบ'
-Set-RobloxLamp $false 'รอเริ่มตรวจสอบ'
-Add-Activity 'พร้อมใช้งาน'
+Apply-Language
+Set-InternetLamp $false (T 'รอเริ่มตรวจสอบ' 'Waiting to start monitoring')
+Set-RobloxLamp $false (T 'รอเริ่มตรวจสอบ' 'Waiting to start monitoring')
+Add-Activity (T 'พร้อมใช้งาน' 'Ready')
 [void]$form.ShowDialog()
