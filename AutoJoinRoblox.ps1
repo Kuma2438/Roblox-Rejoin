@@ -279,6 +279,16 @@ $start.Add_Click({
     $stop.Enabled = $true
     $timer.Start()
     Add-Activity 'เริ่มเฝ้าดู Roblox และอินเทอร์เน็ต'
+    $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
+    if ($players.Count -gt 0) {
+        $script:everSeenRoblox = $true
+        Set-RobloxLamp $true 'พบ Roblox Player กำลังทำงาน'
+        Set-Status 'กำลังเฝ้าดู' 'พบเกมที่เปิดอยู่แล้ว จะไม่เปิดซ้ำเพื่อไม่รบกวนการเล่น' 'SeaGreen'
+        Add-Activity 'พบ Roblox Player ที่เปิดอยู่แล้ว ข้ามการเปิดเกมใหม่'
+        Set-InternetLamp (Test-InternetConnection) 'ตรวจพบสถานะอินเทอร์เน็ต'
+        return
+    }
+    Set-RobloxLamp $false 'ไม่พบ Roblox Player กำลังเข้าเกม'
     & $launchGame
 })
 $stop.Add_Click({
