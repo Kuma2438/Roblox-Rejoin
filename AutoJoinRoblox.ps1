@@ -113,232 +113,312 @@ function Set-RobloxLamp([bool]$online, [string]$detail) {
 
 $form = New-Object Windows.Forms.Form
 $form.Text = 'Roblox Auto Rejoin'
-$form.Size = New-Object Drawing.Size(760,640)
-$form.MinimumSize = New-Object Drawing.Size(760,640)
-$form.MaximumSize = New-Object Drawing.Size(760,640)
+$form.Size = New-Object Drawing.Size(820,780)
+$form.MinimumSize = New-Object Drawing.Size(820,780)
+$form.MaximumSize = New-Object Drawing.Size(820,780)
 $form.StartPosition = 'CenterScreen'
 $form.FormBorderStyle = 'FixedSingle'
 $form.MaximizeBox = $false
-$form.BackColor = [Drawing.Color]::FromArgb(8,12,24)
+$form.BackColor = [Drawing.Color]::FromArgb(7,11,22)
 $form.Font = New-Object Drawing.Font('Segoe UI',10)
 
 $header = New-Object Windows.Forms.Panel
 $header.Location = New-Object Drawing.Point(0,0)
-$header.Size = New-Object Drawing.Size(760,106)
-$header.BackColor = [Drawing.Color]::FromArgb(10,16,32)
+$header.Size = New-Object Drawing.Size(804,142)
+$header.BackColor = [Drawing.Color]::FromArgb(18,24,48)
+$header.Add_Paint({
+    param($sender, $eventArgs)
+    $rect = $sender.ClientRectangle
+    $brush = New-Object Drawing.Drawing2D.LinearGradientBrush($rect,[Drawing.Color]::FromArgb(13,23,48),[Drawing.Color]::FromArgb(40,18,71),25)
+    $eventArgs.Graphics.FillRectangle($brush,$rect)
+    $brush.Dispose()
+})
 $form.Controls.Add($header)
 
+$headerKicker = New-Object Windows.Forms.Label
+$headerKicker.Text = 'REJOIN CONTROL  /  ROBLOX'
+$headerKicker.Font = New-Object Drawing.Font('Segoe UI Semibold',8,[Drawing.FontStyle]::Bold)
+$headerKicker.ForeColor = [Drawing.Color]::FromArgb(84,229,255)
+$headerKicker.Location = New-Object Drawing.Point(30,18)
+$headerKicker.Size = New-Object Drawing.Size(420,18)
+$header.Controls.Add($headerKicker)
+
 $title = New-Object Windows.Forms.Label
-$title.Text = 'ROBLOX AUTO REJOIN'
-$title.Font = New-Object Drawing.Font('Segoe UI Semibold',18,[Drawing.FontStyle]::Bold)
-$title.ForeColor = [Drawing.Color]::FromArgb(93,245,255)
-$title.Location = New-Object Drawing.Point(28,20)
-$title.Size = New-Object Drawing.Size(420,34)
+$title.Text = 'ROBLOX REJOIN'
+$title.Font = New-Object Drawing.Font('Segoe UI Semibold',21,[Drawing.FontStyle]::Bold)
+$title.ForeColor = [Drawing.Color]::FromArgb(236,247,255)
+$title.Location = New-Object Drawing.Point(28,39)
+$title.Size = New-Object Drawing.Size(520,40)
 $header.Controls.Add($title)
 
 $subtitle = New-Object Windows.Forms.Label
 $subtitle.Text = 'เฝ้าดูการเชื่อมต่อ และพากลับเข้า Anime Adventures อัตโนมัติ'
-$subtitle.Font = New-Object Drawing.Font('Segoe UI',10)
-$subtitle.ForeColor = [Drawing.Color]::FromArgb(132,174,202)
-$subtitle.Location = New-Object Drawing.Point(30,61)
-$subtitle.Size = New-Object Drawing.Size(585,24)
+$subtitle.Font = New-Object Drawing.Font('Segoe UI',9)
+$subtitle.ForeColor = [Drawing.Color]::FromArgb(160,181,210)
+$subtitle.Location = New-Object Drawing.Point(30,91)
+$subtitle.Size = New-Object Drawing.Size(620,24)
 $header.Controls.Add($subtitle)
-$headerAccent = New-Object Windows.Forms.Panel
-$headerAccent.Location = New-Object Drawing.Point(24,102)
-$headerAccent.Size = New-Object Drawing.Size(696,2)
-$headerAccent.BackColor = [Drawing.Color]::FromArgb(0,225,255)
-$header.Controls.Add($headerAccent)
 
 $languageButton = New-Object Windows.Forms.Button
 $languageButton.Text = 'EN'
-$languageButton.Location = New-Object Drawing.Point(672,22)
-$languageButton.Size = New-Object Drawing.Size(64,34)
+$languageButton.Location = New-Object Drawing.Point(706,24)
+$languageButton.Size = New-Object Drawing.Size(66,36)
 $languageButton.FlatStyle = 'Flat'
+$languageButton.FlatAppearance.BorderSize = 1
 $languageButton.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(0,220,255)
-$languageButton.BackColor = [Drawing.Color]::FromArgb(18,27,49)
-$languageButton.ForeColor = [Drawing.Color]::White
+$languageButton.FlatAppearance.MouseOverBackColor = [Drawing.Color]::FromArgb(31,53,81)
+$languageButton.BackColor = [Drawing.Color]::FromArgb(17,27,50)
+$languageButton.ForeColor = [Drawing.Color]::FromArgb(100,238,255)
 $languageButton.Font = New-Object Drawing.Font('Segoe UI Semibold',9,[Drawing.FontStyle]::Bold)
 $languageButton.Cursor = 'Hand'
-$languageButton.FlatAppearance.MouseOverBackColor = [Drawing.Color]::FromArgb(24,45,68)
 $header.Controls.Add($languageButton)
 
+$headerAccent = New-Object Windows.Forms.Panel
+$headerAccent.Location = New-Object Drawing.Point(28,137)
+$headerAccent.Size = New-Object Drawing.Size(748,2)
+$headerAccent.BackColor = [Drawing.Color]::FromArgb(0,225,255)
+$header.Controls.Add($headerAccent)
 
 $gameCard = New-Object Windows.Forms.Panel
-$gameCard.Location = New-Object Drawing.Point(24,122)
-$gameCard.Size = New-Object Drawing.Size(696,70)
+$gameCard.Location = New-Object Drawing.Point(28,162)
+$gameCard.Size = New-Object Drawing.Size(748,78)
 $gameCard.BackColor = [Drawing.Color]::FromArgb(16,24,44)
 $form.Controls.Add($gameCard)
 
 $gameTitle = New-Object Windows.Forms.Label
 $gameTitle.Text = 'Anime Adventures'
-$gameTitle.Font = New-Object Drawing.Font('Segoe UI Semibold',13,[Drawing.FontStyle]::Bold)
-$gameTitle.ForeColor = [Drawing.Color]::FromArgb(232,246,255)
-$gameTitle.Location = New-Object Drawing.Point(18,11)
-$gameTitle.Size = New-Object Drawing.Size(350,26)
+$gameTitle.Font = New-Object Drawing.Font('Segoe UI Semibold',14,[Drawing.FontStyle]::Bold)
+$gameTitle.ForeColor = [Drawing.Color]::FromArgb(238,247,255)
+$gameTitle.Location = New-Object Drawing.Point(20,12)
+$gameTitle.Size = New-Object Drawing.Size(430,29)
 $gameCard.Controls.Add($gameTitle)
 
 $gameId = New-Object Windows.Forms.Label
 $gameId.Text = 'เกม Roblox  •  Place ID 8304191830'
 $gameId.Font = New-Object Drawing.Font('Segoe UI',9)
-$gameId.ForeColor = [Drawing.Color]::FromArgb(133,164,191)
-$gameId.Location = New-Object Drawing.Point(19,40)
-$gameId.Size = New-Object Drawing.Size(380,20)
+$gameId.ForeColor = [Drawing.Color]::FromArgb(145,171,197)
+$gameId.Location = New-Object Drawing.Point(21,44)
+$gameId.Size = New-Object Drawing.Size(430,20)
 $gameCard.Controls.Add($gameId)
 
+$heroBadge = New-Object Windows.Forms.Label
+$heroBadge.Text = 'SELECTED EXPERIENCE'
+$heroBadge.Font = New-Object Drawing.Font('Segoe UI Semibold',8,[Drawing.FontStyle]::Bold)
+$heroBadge.ForeColor = [Drawing.Color]::FromArgb(94,234,212)
+$heroBadge.BackColor = [Drawing.Color]::FromArgb(20,49,56)
+$heroBadge.TextAlign = 'MiddleCenter'
+$heroBadge.Location = New-Object Drawing.Point(568,22)
+$heroBadge.Size = New-Object Drawing.Size(156,32)
+$gameCard.Controls.Add($heroBadge)
+
 $statusCard = New-Object Windows.Forms.Panel
-$statusCard.Location = New-Object Drawing.Point(24,208)
-$statusCard.Size = New-Object Drawing.Size(696,76)
+$statusCard.Location = New-Object Drawing.Point(28,260)
+$statusCard.Size = New-Object Drawing.Size(748,92)
 $statusCard.BackColor = [Drawing.Color]::FromArgb(16,24,44)
 $form.Controls.Add($statusCard)
 
 $statusDot = New-Object Windows.Forms.Panel
-$statusDot.Location = New-Object Drawing.Point(20,18)
-$statusDot.Size = New-Object Drawing.Size(14,14)
-$statusDot.BackColor = [Drawing.Color]::FromName('Gray')
+$statusDot.Location = New-Object Drawing.Point(22,24)
+$statusDot.Size = New-Object Drawing.Size(13,13)
+$statusDot.BackColor = [Drawing.Color]::FromArgb(116,137,160)
 $statusCard.Controls.Add($statusDot)
+$statusDot.Add_Paint({
+    param($sender, $eventArgs)
+    $brush = New-Object Drawing.SolidBrush($sender.BackColor)
+    $eventArgs.Graphics.SmoothingMode = [Drawing.Drawing2D.SmoothingMode]::AntiAlias
+    $eventArgs.Graphics.FillEllipse($brush,0,0,$sender.Width - 1,$sender.Height - 1)
+    $brush.Dispose()
+})
 
 $statusLabel = New-Object Windows.Forms.Label
 $statusLabel.Text = 'หยุดทำงาน'
-$statusLabel.Font = New-Object Drawing.Font('Segoe UI Semibold',13,[Drawing.FontStyle]::Bold)
-$statusLabel.ForeColor = [Drawing.Color]::FromArgb(232,246,255)
-$statusLabel.Location = New-Object Drawing.Point(45,10)
-$statusLabel.Size = New-Object Drawing.Size(540,28)
+$statusLabel.Font = New-Object Drawing.Font('Segoe UI Semibold',14,[Drawing.FontStyle]::Bold)
+$statusLabel.ForeColor = [Drawing.Color]::FromArgb(240,247,255)
+$statusLabel.Location = New-Object Drawing.Point(49,14)
+$statusLabel.Size = New-Object Drawing.Size(650,30)
 $statusCard.Controls.Add($statusLabel)
 
 $detailLabel = New-Object Windows.Forms.Label
 $detailLabel.Text = 'กดปุ่มด้านล่างเพื่อเริ่มเข้าเกมและเฝ้าดูการเชื่อมต่อ'
 $detailLabel.Font = New-Object Drawing.Font('Segoe UI',9)
-$detailLabel.ForeColor = [Drawing.Color]::FromArgb(133,164,191)
-$detailLabel.Location = New-Object Drawing.Point(45,43)
-$detailLabel.Size = New-Object Drawing.Size(565,24)
+$detailLabel.ForeColor = [Drawing.Color]::FromArgb(147,171,198)
+$detailLabel.Location = New-Object Drawing.Point(49,49)
+$detailLabel.Size = New-Object Drawing.Size(670,24)
 $statusCard.Controls.Add($detailLabel)
 
-$logTitle = New-Object Windows.Forms.Label
-$logTitle.Text = 'บันทึกกิจกรรม'
-$logTitle.Font = New-Object Drawing.Font('Segoe UI Semibold',10,[Drawing.FontStyle]::Bold)
-$logTitle.ForeColor = [Drawing.Color]::FromArgb(107,230,255)
-$logTitle.Location = New-Object Drawing.Point(26,406)
-$logTitle.Size = New-Object Drawing.Size(200,24)
-$form.Controls.Add($logTitle)
-
-$logBox = New-Object Windows.Forms.TextBox
-$logBox.Location = New-Object Drawing.Point(24,432)
-$logBox.Size = New-Object Drawing.Size(696,74)
-$logBox.Multiline = $true
-$logBox.ReadOnly = $true
-$logBox.ScrollBars = 'Vertical'
-$logBox.BorderStyle = 'FixedSingle'
-$logBox.BackColor = [Drawing.Color]::FromArgb(10,17,32)
-$logBox.ForeColor = [Drawing.Color]::FromArgb(148,207,222)
-$logBox.Font = New-Object Drawing.Font('Consolas',9)
-$form.Controls.Add($logBox)
-
-$start = New-Object Windows.Forms.Button
-$start.Text = 'เริ่มเฝ้าดูและเข้าเกม'
-$start.Location = New-Object Drawing.Point(24,526)
-$start.Size = New-Object Drawing.Size(230,42)
-$start.FlatStyle = 'Flat'
-$start.FlatAppearance.BorderSize = 0
-$start.BackColor = [Drawing.Color]::FromArgb(0,225,255)
-$start.ForeColor = [Drawing.Color]::FromArgb(4,15,26)
-$start.Font = New-Object Drawing.Font('Segoe UI Semibold',10,[Drawing.FontStyle]::Bold)
-$start.Cursor = 'Hand'
-$start.FlatAppearance.MouseOverBackColor = [Drawing.Color]::FromArgb(90,245,255)
-$form.Controls.Add($start)
-
-$stop = New-Object Windows.Forms.Button
-$stop.Text = (T 'หยุดเฝ้าดู' 'Stop monitoring')
-$stop.Location = New-Object Drawing.Point(266,526)
-$stop.Size = New-Object Drawing.Size(125,42)
-$stop.FlatStyle = 'Flat'
-$stop.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(182,82,255)
-$stop.BackColor = [Drawing.Color]::FromArgb(18,27,49)
-$stop.ForeColor = [Drawing.Color]::FromArgb(107,230,255)
-$stop.Enabled = $false
-$stop.Cursor = 'Hand'
-$stop.FlatAppearance.MouseOverBackColor = [Drawing.Color]::FromArgb(34,47,76)
-$form.Controls.Add($stop)
-
-$footer = New-Object Windows.Forms.Label
-$footer.Text = 'ตรวจ Roblox และอินเทอร์เน็ตทุก 10 วินาที'
-$footer.Location = New-Object Drawing.Point(458,537)
-$footer.Size = New-Object Drawing.Size(250,22)
-$footer.TextAlign = 'MiddleRight'
-$footer.Font = New-Object Drawing.Font('Segoe UI',8)
-$footer.ForeColor = [Drawing.Color]::FromArgb(112,143,170)
-$form.Controls.Add($footer)
-
-
 $connectionCards = New-Object Windows.Forms.Panel
-$connectionCards.Location = New-Object Drawing.Point(24,296)
-$connectionCards.Size = New-Object Drawing.Size(696,96)
+$connectionCards.Location = New-Object Drawing.Point(28,372)
+$connectionCards.Size = New-Object Drawing.Size(748,116)
 $connectionCards.BackColor = $form.BackColor
 $form.Controls.Add($connectionCards)
 
 $internetCard = New-Object Windows.Forms.Panel
 $internetCard.Location = New-Object Drawing.Point(0,0)
-$internetCard.Size = New-Object Drawing.Size(338,96)
+$internetCard.Size = New-Object Drawing.Size(362,116)
 $internetCard.BackColor = [Drawing.Color]::FromArgb(16,24,44)
 $connectionCards.Controls.Add($internetCard)
 
 $internetHeading = New-Object Windows.Forms.Label
 $internetHeading.Text = 'อินเทอร์เน็ต'
-$internetHeading.Font = New-Object Drawing.Font('Segoe UI Semibold',10,[Drawing.FontStyle]::Bold)
-$internetHeading.ForeColor = [Drawing.Color]::FromArgb(132,176,205)
-$internetHeading.Location = New-Object Drawing.Point(16,10)
-$internetHeading.Size = New-Object Drawing.Size(300,22)
+$internetHeading.Font = New-Object Drawing.Font('Segoe UI Semibold',9,[Drawing.FontStyle]::Bold)
+$internetHeading.ForeColor = [Drawing.Color]::FromArgb(145,173,204)
+$internetHeading.Location = New-Object Drawing.Point(19,14)
+$internetHeading.Size = New-Object Drawing.Size(320,20)
 $internetCard.Controls.Add($internetHeading)
 
 $internetLamp = New-Object Windows.Forms.Label
 $internetLamp.Text = '● ออฟไลน์'
-$internetLamp.Font = New-Object Drawing.Font('Segoe UI Semibold',15,[Drawing.FontStyle]::Bold)
-$internetLamp.ForeColor = [Drawing.Color]::FromArgb(210,65,70)
-$internetLamp.Location = New-Object Drawing.Point(16,35)
-$internetLamp.Size = New-Object Drawing.Size(300,30)
+$internetLamp.Font = New-Object Drawing.Font('Segoe UI Semibold',16,[Drawing.FontStyle]::Bold)
+$internetLamp.ForeColor = [Drawing.Color]::FromArgb(255,63,113)
+$internetLamp.Location = New-Object Drawing.Point(18,40)
+$internetLamp.Size = New-Object Drawing.Size(320,32)
 $internetCard.Controls.Add($internetLamp)
 
 $internetDetail = New-Object Windows.Forms.Label
-$internetDetail.Text = (T 'รอเริ่มตรวจสอบ' 'Waiting to start monitoring')
+$internetDetail.Text = 'รอเริ่มตรวจสอบ'
 $internetDetail.Font = New-Object Drawing.Font('Segoe UI',8)
-$internetDetail.ForeColor = [Drawing.Color]::FromArgb(112,145,172)
-$internetDetail.Location = New-Object Drawing.Point(18,68)
-$internetDetail.Size = New-Object Drawing.Size(300,18)
+$internetDetail.ForeColor = [Drawing.Color]::FromArgb(132,158,186)
+$internetDetail.Location = New-Object Drawing.Point(20,82)
+$internetDetail.Size = New-Object Drawing.Size(320,19)
 $internetCard.Controls.Add($internetDetail)
 
 $robloxCard = New-Object Windows.Forms.Panel
-$robloxCard.Location = New-Object Drawing.Point(358,0)
-$robloxCard.Size = New-Object Drawing.Size(338,96)
+$robloxCard.Location = New-Object Drawing.Point(386,0)
+$robloxCard.Size = New-Object Drawing.Size(362,116)
 $robloxCard.BackColor = [Drawing.Color]::FromArgb(16,24,44)
 $connectionCards.Controls.Add($robloxCard)
 
 $robloxHeading = New-Object Windows.Forms.Label
 $robloxHeading.Text = 'ROBLOX PLAYER'
-$robloxHeading.Font = New-Object Drawing.Font('Segoe UI Semibold',10,[Drawing.FontStyle]::Bold)
-$robloxHeading.ForeColor = [Drawing.Color]::FromArgb(132,176,205)
-$robloxHeading.Location = New-Object Drawing.Point(16,10)
-$robloxHeading.Size = New-Object Drawing.Size(300,22)
+$robloxHeading.Font = New-Object Drawing.Font('Segoe UI Semibold',9,[Drawing.FontStyle]::Bold)
+$robloxHeading.ForeColor = [Drawing.Color]::FromArgb(145,173,204)
+$robloxHeading.Location = New-Object Drawing.Point(19,14)
+$robloxHeading.Size = New-Object Drawing.Size(320,20)
 $robloxCard.Controls.Add($robloxHeading)
 
 $robloxLamp = New-Object Windows.Forms.Label
 $robloxLamp.Text = '● ออฟไลน์'
-$robloxLamp.Font = New-Object Drawing.Font('Segoe UI Semibold',15,[Drawing.FontStyle]::Bold)
-$robloxLamp.ForeColor = [Drawing.Color]::FromArgb(210,65,70)
-$robloxLamp.Location = New-Object Drawing.Point(16,35)
-$robloxLamp.Size = New-Object Drawing.Size(300,30)
+$robloxLamp.Font = New-Object Drawing.Font('Segoe UI Semibold',16,[Drawing.FontStyle]::Bold)
+$robloxLamp.ForeColor = [Drawing.Color]::FromArgb(255,63,113)
+$robloxLamp.Location = New-Object Drawing.Point(18,40)
+$robloxLamp.Size = New-Object Drawing.Size(320,32)
 $robloxCard.Controls.Add($robloxLamp)
 
 $robloxDetail = New-Object Windows.Forms.Label
-$robloxDetail.Text = (T 'รอเริ่มตรวจสอบ' 'Waiting to start monitoring')
+$robloxDetail.Text = 'รอเริ่มตรวจสอบ'
 $robloxDetail.Font = New-Object Drawing.Font('Segoe UI',8)
-$robloxDetail.ForeColor = [Drawing.Color]::FromArgb(112,145,172)
-$robloxDetail.Location = New-Object Drawing.Point(18,68)
-$robloxDetail.Size = New-Object Drawing.Size(300,18)
+$robloxDetail.ForeColor = [Drawing.Color]::FromArgb(132,158,186)
+$robloxDetail.Location = New-Object Drawing.Point(20,82)
+$robloxDetail.Size = New-Object Drawing.Size(320,19)
 $robloxCard.Controls.Add($robloxDetail)
 
+$logTitle = New-Object Windows.Forms.Label
+$logTitle.Text = 'บันทึกกิจกรรม'
+$logTitle.Font = New-Object Drawing.Font('Segoe UI Semibold',10,[Drawing.FontStyle]::Bold)
+$logTitle.ForeColor = [Drawing.Color]::FromArgb(92,230,255)
+$logTitle.Location = New-Object Drawing.Point(31,510)
+$logTitle.Size = New-Object Drawing.Size(230,23)
+$form.Controls.Add($logTitle)
+
+$logBox = New-Object Windows.Forms.TextBox
+$logBox.Location = New-Object Drawing.Point(28,539)
+$logBox.Size = New-Object Drawing.Size(748,102)
+$logBox.Multiline = $true
+$logBox.ReadOnly = $true
+$logBox.ScrollBars = 'Vertical'
+$logBox.BorderStyle = 'None'
+$logBox.BackColor = [Drawing.Color]::FromArgb(10,17,32)
+$logBox.ForeColor = [Drawing.Color]::FromArgb(156,204,218)
+$logBox.Font = New-Object Drawing.Font('Consolas',9)
+$form.Controls.Add($logBox)
+
+$start = New-Object Windows.Forms.Button
+$start.Text = 'เริ่มเฝ้าดูและเข้าเกม'
+$start.Location = New-Object Drawing.Point(28,666)
+$start.Size = New-Object Drawing.Size(226,46)
+$start.FlatStyle = 'Flat'
+$start.FlatAppearance.BorderSize = 0
+$start.FlatAppearance.MouseOverBackColor = [Drawing.Color]::FromArgb(88,246,255)
+$start.BackColor = [Drawing.Color]::FromArgb(0,225,255)
+$start.ForeColor = [Drawing.Color]::FromArgb(4,15,26)
+$start.Font = New-Object Drawing.Font('Segoe UI Semibold',10,[Drawing.FontStyle]::Bold)
+$start.Cursor = 'Hand'
+$form.Controls.Add($start)
+
+$stop = New-Object Windows.Forms.Button
+$stop.Text = 'หยุดเฝ้าดู'
+$stop.Location = New-Object Drawing.Point(268,666)
+$stop.Size = New-Object Drawing.Size(140,46)
+$stop.FlatStyle = 'Flat'
+$stop.FlatAppearance.BorderSize = 1
+$stop.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(182,82,255)
+$stop.FlatAppearance.MouseOverBackColor = [Drawing.Color]::FromArgb(35,46,75)
+$stop.BackColor = [Drawing.Color]::FromArgb(18,27,49)
+$stop.ForeColor = [Drawing.Color]::FromArgb(222,237,250)
+$stop.Font = New-Object Drawing.Font('Segoe UI Semibold',9,[Drawing.FontStyle]::Bold)
+$stop.Enabled = $false
+$stop.Cursor = 'Hand'
+$form.Controls.Add($stop)
+
+$footer = New-Object Windows.Forms.Label
+$footer.Text = 'ตรวจ Roblox และอินเทอร์เน็ตทุก 10 วินาที'
+$footer.Location = New-Object Drawing.Point(452,679)
+$footer.Size = New-Object Drawing.Size(324,22)
+$footer.TextAlign = 'MiddleRight'
+$footer.Font = New-Object Drawing.Font('Segoe UI',8)
+$footer.ForeColor = [Drawing.Color]::FromArgb(116,146,176)
+$form.Controls.Add($footer)
+
+function Set-RoundedCorners($control, [int]$radius) {
+    $path = New-Object Drawing.Drawing2D.GraphicsPath
+    $diameter = $radius * 2
+    $width = $control.Width - 1
+    $height = $control.Height - 1
+    $path.AddArc(0,0,$diameter,$diameter,180,90)
+    $path.AddArc($width - $diameter,0,$diameter,$diameter,270,90)
+    $path.AddArc($width - $diameter,$height - $diameter,$diameter,$diameter,0,90)
+    $path.AddArc(0,$height - $diameter,$diameter,$diameter,90,90)
+    $path.CloseFigure()
+    $control.Region = New-Object Drawing.Region($path)
+    $path.Dispose()
+}
+function Add-NeonBorder($control, [int]$red, [int]$green, [int]$blue) {
+    $paint = {
+        param($sender, $eventArgs)
+        $eventArgs.Graphics.SmoothingMode = [Drawing.Drawing2D.SmoothingMode]::AntiAlias
+        $rect = New-Object Drawing.Rectangle(0,0,$sender.Width - 1,$sender.Height - 1)
+        $path = New-Object Drawing.Drawing2D.GraphicsPath
+        $radius = 14
+        $d = $radius * 2
+        $path.AddArc($rect.Left,$rect.Top,$d,$d,180,90)
+        $path.AddArc($rect.Right - $d,$rect.Top,$d,$d,270,90)
+        $path.AddArc($rect.Right - $d,$rect.Bottom - $d,$d,$d,0,90)
+        $path.AddArc($rect.Left,$rect.Bottom - $d,$d,$d,90,90)
+        $path.CloseFigure()
+        $pen = New-Object Drawing.Pen([Drawing.Color]::FromArgb($red,$green,$blue),1)
+        $eventArgs.Graphics.DrawPath($pen,$path)
+        $pen.Dispose()
+        $path.Dispose()
+    }.GetNewClosure()
+    $control.Add_Paint($paint)
+}
+Set-RoundedCorners $gameCard 15
+Set-RoundedCorners $statusCard 15
+Set-RoundedCorners $internetCard 15
+Set-RoundedCorners $robloxCard 15
+Set-RoundedCorners $logBox 12
+Set-RoundedCorners $start 12
+Set-RoundedCorners $stop 12
+Set-RoundedCorners $languageButton 10
+Add-NeonBorder $gameCard 0 225 255
+Add-NeonBorder $statusCard 0 225 255
+Add-NeonBorder $internetCard 182 82 255
+Add-NeonBorder $robloxCard 0 225 255
 
 function Apply-Language {
     $subtitle.Text = T 'เฝ้าดูการเชื่อมต่อ และพากลับเข้า Anime Adventures อัตโนมัติ' 'Monitor your connection and automatically rejoin Anime Adventures'
     $gameId.Text = T 'เกม Roblox  •  Place ID 8304191830' 'Roblox experience  •  Place ID 8304191830'
+    $heroBadge.Text = T 'เกมที่เลือก' 'SELECTED EXPERIENCE'
     $internetHeading.Text = T 'อินเทอร์เน็ต' 'INTERNET'
     $robloxHeading.Text = 'ROBLOX PLAYER'
     $logTitle.Text = T 'บันทึกกิจกรรม' 'Activity log'
@@ -360,18 +440,6 @@ $languageButton.Add_Click({
     Add-Activity (T 'เปลี่ยนภาษาแล้ว' 'Language changed')
 })
 
-function Add-NeonBorder($control, [int]$red, [int]$green, [int]$blue) {
-    $control.Add_Paint({
-        param($sender, $eventArgs)
-        $pen = New-Object Drawing.Pen([Drawing.Color]::FromArgb($red,$green,$blue),1)
-        $eventArgs.Graphics.DrawRectangle($pen,0,0,$sender.Width - 1,$sender.Height - 1)
-        $pen.Dispose()
-    }.GetNewClosure())
-}
-Add-NeonBorder $gameCard 0 225 255
-Add-NeonBorder $statusCard 0 225 255
-Add-NeonBorder $internetCard 182 82 255
-Add-NeonBorder $robloxCard 0 225 255
 $timer = New-Object Windows.Forms.Timer
 $timer.Interval = $intervalSeconds * 1000
 $launchGame = {
