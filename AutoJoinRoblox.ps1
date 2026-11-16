@@ -5,6 +5,14 @@ $url = 'roblox://placeId=8304191830'
 $script:language = 'th'
 $script:internetOnline = $false
 $script:robloxOnline = $false
+$script:appReturnSince = $null
+$script:appReturnKey = $null
+$script:handledAppReturnKey = $null
+$script:sessionLogPath = $null
+$script:sessionLogWriteTime = [datetime]::MinValue
+$script:sessionLogState = 'unknown'
+$script:sessionLogSawPlay = $false
+$script:sessionLogEventKey = $null
 function T([string]$th, [string]$en) { if ($script:language -eq 'en') { return $en }; return $th }
 $intervalSeconds = 10
 $script:monitoring = $false
@@ -26,6 +34,59 @@ function Test-InternetConnection {
         return $false
     } finally {
         $client.Close()
+    }
+}
+
+function Get-RobloxSessionState {
+    $logDirectory = Join-Path $env:LOCALAPPDATA 'Roblox\logs'
+    try {
+        $logFile = Get-ChildItem -LiteralPath $logDirectory -Filter '*_Player_*_last.log' -ErrorAction Stop |
+            Where-Object { $_.Name -notmatch '_CrashHandler_' } |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
+        if (-not $logFile) { return $null }
+
+        $newLog = ($script:sessionLogPath -ne $logFile.FullName)
+        if (-not $newLog -and $script:sessionLogWriteTime -eq $logFile.LastWriteTime) {
+            return [pscustomobject]@{
+                LogPath = $script:sessionLogPath
+                State = $script:sessionLogState
+                EventKey = $script:sessionLogEventKey
+            }
+        }
+
+        if ($newLog) {
+            $script:sessionLogPath = $logFile.FullName
+            $script:sessionLogState = 'unknown'
+            $script:sessionLogSawPlay = $false
+            $script:sessionLogEventKey = $null
+            $lines = @(Get-Content -LiteralPath $logFile.FullName -ErrorAction Stop)
+        } else {
+            $lines = @(Get-Content -LiteralPath $logFile.FullName -Tail 5000 -ErrorAction Stop)
+        }
+
+        foreach ($line in $lines) {
+            if ($line -match '\[FLog::SessionTransitionFSM\] Entered play session\.') {
+                $script:sessionLogSawPlay = $true
+                $script:sessionLogState = 'play'
+                $script:sessionLogEventKey = $null
+            } elseif ($line -match '\[FLog::SessionTransitionFSM\] Entered app session\.') {
+                if ($script:sessionLogSawPlay) {
+                    $script:sessionLogState = 'app-after-play'
+                    $script:sessionLogEventKey = $line
+                } else {
+                    $script:sessionLogState = 'app-before-play'
+                }
+            }
+        }
+        $script:sessionLogWriteTime = $logFile.LastWriteTime
+        return [pscustomobject]@{
+            LogPath = $script:sessionLogPath
+            State = $script:sessionLogState
+            EventKey = $script:sessionLogEventKey
+        }
+    } catch {
+        return $null
     }
 }
 function Add-Activity([string]$message) {
@@ -387,6 +448,34 @@ $timer.Add_Tick({
     }
     if ($script:internetDown) { return }
     $players = @(Get-Process RobloxPlayerBeta -ErrorAction SilentlyContinue)
+    $sessionState = Get-RobloxSessionState
+    if ($players.Count -gt 0 -and $sessionState -and $sessionState.State -eq 'app-after-play' -and $sessionState.EventKey) {
+        $eventKey = $sessionState.LogPath + '|' + $sessionState.EventKey
+        if ($eventKey -ne $script:handledAppReturnKey) {
+            if ($script:appReturnKey -ne $eventKey) {
+                $script:appReturnKey = $eventKey
+                $script:appReturnSince = Get-Date
+                Set-Status (T 'กลับมาหน้า Roblox แล้ว' 'Returned to Roblox home') (T 'กำลังยืนยันว่าเกมไม่ได้กลับเข้าเซิร์ฟเวอร์...' 'Checking whether the game rejoins automatically...') 'DarkOrange'
+                Add-Activity (T 'ตรวจพบว่า Roblox กลับมาหน้าแอปหลังออกจากเกม' 'Detected Roblox returned to its app screen after leaving the game')
+            }
+            if (((Get-Date) - $script:appReturnSince).TotalSeconds -ge 20) {
+                $script:handledAppReturnKey = $eventKey
+                $script:appReturnSince = $null
+                $script:appReturnKey = $null
+                Add-Activity (T 'ยังอยู่หน้า Roblox หลัง 20 วินาที กำลังปิดแล้วเข้าเกมใหม่' 'Still on the Roblox app screen after 20 seconds; restarting and rejoining')
+                $players | Stop-Process -Force -ErrorAction SilentlyContinue
+                Set-RobloxLamp $false (T 'กำลังเริ่มเกมใหม่' 'Restarting the game')
+                Start-Sleep -Seconds 2
+                $script:everSeenRoblox = $false
+                & $launchGame
+                return
+            }
+            return
+        }
+    } else {
+        $script:appReturnSince = $null
+        $script:appReturnKey = $null
+    }
     if ($players.Count -gt 0) {
         $script:everSeenRoblox = $true
         Set-RobloxLamp $true (T 'พบ Roblox Player กำลังทำงาน' 'Roblox Player is running')
