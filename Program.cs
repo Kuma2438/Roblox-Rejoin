@@ -294,7 +294,7 @@ namespace RobloxRejoin
                 Location = new Point(22, 14), Size = new Size(38, 38),
                 BackColor = Color.FromArgb(16, 185, 129), BorderColor = Color.FromArgb(72, 221, 178), Radius = 12
             };
-            var logoText = Label("R", 15, FontStyle.Bold, Color.White, ContentAlignment.MiddleCenter);
+            var logoText = Label("●", 10, FontStyle.Bold, Color.White, ContentAlignment.MiddleCenter);
             logoText.Dock = DockStyle.Fill;
             logo.Controls.Add(logoText);
             header.Controls.Add(logo);
@@ -364,7 +364,9 @@ namespace RobloxRejoin
 
             var shell = new TableLayoutPanel
             {
-                Dock = DockStyle.Fill, BackColor = Back, ColumnCount = 2, RowCount = 1,
+                Dock = DockStyle.None, Location = new Point(0, 68), Size = new Size(ClientSize.Width, ClientSize.Height - 68),
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                BackColor = Back, ColumnCount = 2, RowCount = 1,
                 Margin = Padding.Empty, Padding = Padding.Empty
             };
             shell.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 232));
@@ -553,6 +555,8 @@ namespace RobloxRejoin
             _ambientTimer.Start();
             Resize += (_, __) =>
             {
+                shell.Location = new Point(0, header.Height);
+                shell.Size = new Size(ClientSize.Width, ClientSize.Height - header.Height);
                 if (WindowState == FormWindowState.Maximized) Region = null; else ApplyRoundedControls();
                 _languageButton.Location = new Point(ClientSize.Width - 202, 18);
                 _maximizeButton.Location = new Point(ClientSize.Width - 148, 18);
@@ -591,13 +595,13 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
                 BorderColor = Color.FromArgb(37, 40, 49), Radius = 16
             };
             var header = Label(heading, 7, FontStyle.Bold, Muted);
-            if (heading.Contains("INTERNET") || heading.Contains("อินเทอร์เน็ต")) _internetHeading = header;
+            if (_internetHeading == null) _internetHeading = header;
             else _robloxHeading = header;
             header.Location = new Point(14, 12);
             header.Size = new Size(160, 17);
             card.Controls.Add(header);
 
-            dot = new Panel { Size = new Size(7, 7), BackColor = Red, Location = new Point(15, 42) };
+            dot = new Panel { Size = new Size(7, 7), BackColor = Color.FromArgb(78, 84, 92), Location = new Point(15, 42) };
             var dotControl = dot;
             dotControl.Paint += (_, e) =>
             {
@@ -606,12 +610,12 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
             };
             card.Controls.Add(dotControl);
 
-            value = Label(T("ออฟไลน์", "Offline"), 11, FontStyle.Bold, Red);
+            value = Label("STATUS LABEL", 9, FontStyle.Bold, Muted);
             value.Location = new Point(29, 35);
             value.Size = new Size(150, 24);
             card.Controls.Add(value);
 
-            detail = Label(T("รอเริ่มตรวจสอบ", "Waiting to monitor"), 7, FontStyle.Regular, Muted);
+            detail = Label("Placeholder", 7, FontStyle.Regular, Muted);
             detail.Location = new Point(14, 69);
             detail.Size = new Size(166, 20);
             card.Controls.Add(detail);
@@ -671,6 +675,8 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
             _mainDetail.Text = "Placeholder";
             _internetValue.Text = "STATUS LABEL";
             _robloxValue.Text = "STATUS LABEL";
+            _internetDetail.Text = "Placeholder";
+            _robloxDetail.Text = "Placeholder";
         }
 
         private void SetMainStatus(string titleThai, string titleEnglish, string detailThai, string detailEnglish, Color color)
