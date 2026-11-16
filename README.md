@@ -1,17 +1,18 @@
-# Roblox Auto Rejoin — Anime Adventures
+﻿# Roblox Auto Rejoin — Anime Adventures
 
 ## ภาษาไทย
 
 โปรแกรม Windows ธีม neon พร้อมแดชบอร์ดสไตล์เว็บ สำหรับเข้าเกม **Anime Adventures** และเฝ้าดูการทำงานของ Roblox Player กับการเชื่อมต่ออินเทอร์เน็ต เมื่อ Roblox ปิดหรืออินเทอร์เน็ตขาดแล้วกลับมา โปรแกรมจะพยายามเข้าเกมใหม่
+หน้าโปรแกรมแสดงภาพปกเกม พร้อมแท็บ **AA** ด้านบน
 
 ### วิธีใช้งาน
 
 1. ติดตั้ง Roblox Player และเข้าสู่ระบบ
 2. ดาวน์โหลด ZIP จาก GitHub แล้วแตกไฟล์
 3. ดับเบิลคลิก `RobloxRejoin.exe`
-4. กด **เริ่มเฝ้าดู** โปรแกรมจะตรวจ Roblox Player ก่อน หากเกมเปิดอยู่แล้วจะไม่เปิดซ้ำ
+4. กด **เริ่มทำงาน** โปรแกรมจะตรวจ Roblox Player ก่อน หากเกมเปิดอยู่แล้วจะไม่เปิดซ้ำ
 5. ใช้ปุ่ม **EN / ไทย** ที่มุมขวาบนเพื่อเปลี่ยนภาษา
-6. กด **หยุดเฝ้าดู** เมื่อต้องการหยุด
+6. กด **หยุดทำงาน** เมื่อต้องการหยุด
 
 ### สถานะและการเชื่อมต่อ
 
@@ -32,15 +33,16 @@
 ## English
 
 A neon-themed, web-style dashboard that launches **Anime Adventures** and monitors Roblox Player and internet connectivity. It attempts to rejoin the experience if Roblox closes or the internet disconnects and comes back.
+The dashboard includes the game cover art and an **AA** tab in the header.
 
 ### How to use
 
 1. Install Roblox Player and sign in.
 2. Download the repository ZIP and extract it.
 3. Double-click `RobloxRejoin.exe`.
-4. Click **Start monitoring**. The app checks for an existing Roblox Player first and will not launch a duplicate.
+4. Click **Start**. The app checks for an existing Roblox Player first and will not launch a duplicate.
 5. Use the **EN / ไทย** button in the top-right corner to switch languages.
-6. Click **Stop monitoring** when you want to stop.
+6. Click **Stop** when you want to stop.
 
 ### Status and connectivity
 
@@ -55,5 +57,6 @@ A neon-themed, web-style dashboard that launches **Anime Adventures** and monito
 ### Included files
 
 - `RobloxRejoin.exe` — standalone Windows x64 app; the .NET runtime is included
+- `Assets/aa-cover.png` — Anime Adventures game cover shown in the dashboard
 - `Program.cs` and `RobloxRejoin.csproj` — source code and build project
 - `วิธีใช้งาน.txt` — Thai user guide

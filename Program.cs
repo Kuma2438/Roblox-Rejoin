@@ -212,6 +212,17 @@ namespace RobloxRejoin
             header.Controls.Add(brand);
             HookDrag(brand);
 
+            var aaTab = new SoftCard
+            {
+                Location = new Point(222, 18), Size = new Size(54, 30),
+                BackColor = Color.FromArgb(28, 25, 42), BorderColor = Color.FromArgb(76, 62, 116), Radius = 12
+            };
+            var aaTabText = Label("AA", 9, FontStyle.Bold, Color.FromArgb(202, 181, 255), ContentAlignment.MiddleCenter);
+            aaTabText.Dock = DockStyle.Fill;
+            aaTab.Controls.Add(aaTabText);
+            header.Controls.Add(aaTab);
+            HookDrag(aaTab);
+
             _subtitle = Label("CONTROL CENTER", 8, FontStyle.Regular, Muted);
             _subtitle.Location = new Point(74, 34);
             _subtitle.Size = new Size(150, 16);
@@ -289,22 +300,31 @@ namespace RobloxRejoin
 
             var gameMark = new SoftCard
             {
-                Location = new Point(20, 47), Size = new Size(54, 54),
-                BackColor = Color.FromArgb(34, 27, 59), BorderColor = Color.FromArgb(68, 54, 110), Radius = 16
+                Location = new Point(20, 47), Size = new Size(70, 70),
+                BackColor = Color.FromArgb(34, 27, 59), BorderColor = Color.FromArgb(68, 54, 110), Radius = 14
             };
-            var gameMarkText = Label("AA", 15, FontStyle.Bold, Color.FromArgb(201, 174, 255), ContentAlignment.MiddleCenter);
-            gameMarkText.Dock = DockStyle.Fill;
-            gameMark.Controls.Add(gameMarkText);
+            using (var coverStream = typeof(RejoinForm).Assembly.GetManifestResourceStream("RobloxRejoin.aa-cover.png"))
+            using (var coverImage = Image.FromStream(coverStream))
+            {
+                var cover = new PictureBox
+                {
+                    Dock = DockStyle.Fill,
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Image = new Bitmap(coverImage),
+                    BackColor = Color.FromArgb(24, 25, 31)
+                };
+                gameMark.Controls.Add(cover);
+            }
             gameCard.Controls.Add(gameMark);
 
             _gameTitle = Label("Anime Adventures", 15, FontStyle.Bold, Bright);
-            _gameTitle.Location = new Point(88, 51);
-            _gameTitle.Size = new Size(270, 26);
+            _gameTitle.Location = new Point(104, 51);
+            _gameTitle.Size = new Size(254, 26);
             gameCard.Controls.Add(_gameTitle);
 
             _gameId = Label("Roblox experience  ·  Place ID 8304191830", 8, FontStyle.Regular, Muted);
-            _gameId.Location = new Point(89, 80);
-            _gameId.Size = new Size(280, 20);
+            _gameId.Location = new Point(105, 80);
+            _gameId.Size = new Size(270, 20);
             gameCard.Controls.Add(_gameId);
 
             _gameBadge = Label("READY", 8, FontStyle.Bold, Color.FromArgb(94, 217, 170), ContentAlignment.MiddleCenter);
@@ -338,7 +358,7 @@ namespace RobloxRejoin
             actions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
             left.Controls.Add(actions);
 
-            _startButton = new AccentButton("START MONITORING", Color.FromArgb(47, 118, 255), Color.FromArgb(98, 84, 255))
+            _startButton = new AccentButton("START", Color.FromArgb(47, 118, 255), Color.FromArgb(98, 84, 255))
             {
                 Dock = DockStyle.Fill, Margin = new Padding(0, 0, 7, 0)
             };
@@ -507,15 +527,15 @@ namespace RobloxRejoin
             _activitySubtitle.Text = T("สถานะการเชื่อมต่อและกิจกรรมเกม", "Connection and game events");
             _gameId.Text = T("ประสบการณ์ Roblox  ·  Place ID 8304191830", "Roblox experience  ·  Place ID 8304191830");
             _gameBadge.Text = _monitoring ? T("กำลังทำงาน", "ACTIVE") : T("พร้อมใช้งาน", "READY");
-            _startButton.Text = T("เริ่มเฝ้าดู", "START MONITORING");
-            _stopButton.Text = T("หยุดเฝ้าดู", "STOP");
+            _startButton.Text = T("เริ่มทำงาน", "START");
+            _stopButton.Text = T("หยุดทำงาน", "STOP");
             _activityTitle.Text = T("กิจกรรมล่าสุด", "Recent activity");
             _internetHeading.Text = T("อินเทอร์เน็ต", "INTERNET");
             _robloxHeading.Text = "ROBLOX PLAYER";
-            _mainStatus.Text = _monitoring ? T("กำลังเฝ้าดู", "Monitoring") : T("หยุดทำงาน", "Stopped");
+            _mainStatus.Text = _monitoring ? T("กำลังทำงาน", "Running") : T("หยุดทำงาน", "Stopped");
             _mainDetail.Text = _monitoring
                 ? T("ตรวจสอบ Roblox และอินเทอร์เน็ตทุก 10 วินาที", "Roblox and internet are checked every 10 seconds")
-                : T("เริ่มเฝ้าดูเพื่อเชื่อมต่อ Anime Adventures", "Start monitoring to connect to Anime Adventures");
+                : T("กดเริ่มทำงานเพื่อเชื่อมต่อ Anime Adventures", "Press Start to connect to Anime Adventures");
             _internetValue.Text = _internetValue.ForeColor == Green ? T("ออนไลน์", "Online") : T("ออฟไลน์", "Offline");
             _robloxValue.Text = _robloxValue.ForeColor == Green ? T("ออนไลน์", "Online") : T("ออฟไลน์", "Offline");
         }
@@ -592,7 +612,7 @@ namespace RobloxRejoin
                 _everSawPlayer = true;
                 SetIndicator(true, _robloxValue, _robloxDetail, _robloxDot,
                     "พบ Roblox Player กำลังทำงาน", "Roblox Player process is running");
-                SetMainStatus("กำลังเฝ้าดู", "Monitoring",
+                SetMainStatus("กำลังทำงาน", "Running",
                     "พบเกมที่เปิดอยู่แล้ว จะไม่เปิดซ้ำ", "An existing Roblox Player was found; skipping launch", Green);
                 AddActivity("พบ Roblox Player ที่เปิดอยู่แล้ว จึงไม่เปิดเกมซ้ำ",
                     "Found a running Roblox Player; skipped duplicate launch");
@@ -604,8 +624,8 @@ namespace RobloxRejoin
                     "กำลังเปิด Roblox", "Launching Roblox");
                 SetMainStatus("กำลังเปิดเกม", "Launching game",
                     "กำลังเชื่อมต่อ Anime Adventures", "Connecting to Anime Adventures", Cyan);
-                AddActivity("เริ่มเฝ้าดูและกำลังเปิด Anime Adventures",
-                    "Monitoring started; launching Anime Adventures");
+                AddActivity("เริ่มทำงานและกำลังเปิด Anime Adventures",
+                    "Started; launching Anime Adventures");
                 LaunchGame();
             }
         }
@@ -627,11 +647,11 @@ namespace RobloxRejoin
             SetIndicator(active, _robloxValue, _robloxDetail, _robloxDot,
                 active ? "Roblox Player ยังทำงาน" : "ไม่พบ Roblox Player",
                 active ? "Roblox Player is still running" : "Roblox Player not found");
-            SetMainStatus("หยุดเฝ้าดู", "Stopped",
+            SetMainStatus("หยุดทำงาน", "Stopped",
                 "Roblox ที่กำลังเปิดอยู่จะไม่ถูกปิด", "The running Roblox Player will not be closed", Muted);
             _startButton.Enabled = true;
             _stopButton.Enabled = false;
-            AddActivity("หยุดเฝ้าดูแล้ว", "Monitoring stopped");
+            AddActivity("หยุดทำงานแล้ว", "Stopped");
         }
 
         private async Task MonitorTickAsync()
@@ -737,7 +757,7 @@ namespace RobloxRejoin
                 if (players.Length > 0)
                 {
                     _everSawPlayer = true;
-                    SetMainStatus("กำลังเฝ้าดู", "Monitoring",
+                    SetMainStatus("กำลังทำงาน", "Running",
                         "Roblox Player ทำงานและอินเทอร์เน็ตปกติ", "Roblox Player is running and internet is available", Green);
                     return;
                 }
