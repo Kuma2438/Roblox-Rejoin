@@ -8,8 +8,8 @@
 
 1. ติดตั้ง Roblox Player และเข้าสู่ระบบ
 2. ดาวน์โหลด ZIP จาก GitHub แล้วแตกไฟล์
-3. ดับเบิลคลิก `Start Auto Join.bat`
-4. กด **เริ่มเฝ้าดูและเข้าเกม** โปรแกรมจะตรวจ Roblox Player ก่อน หากเกมเปิดอยู่แล้วจะไม่เปิดซ้ำ
+3. ดับเบิลคลิก `RobloxRejoin.exe`
+4. กด **เริ่มเฝ้าดู** โปรแกรมจะตรวจ Roblox Player ก่อน หากเกมเปิดอยู่แล้วจะไม่เปิดซ้ำ
 5. ใช้ปุ่ม **EN / ไทย** ที่มุมขวาบนเพื่อเปลี่ยนภาษา
 6. กด **หยุดเฝ้าดู** เมื่อต้องการหยุด
 
@@ -25,19 +25,19 @@
 
 ### ไฟล์ในโปรแกรม
 
-- `AutoJoinRoblox.ps1` — โปรแกรมพร้อมหน้าต่างควบคุม
-- `Start Auto Join.bat` — ตัวเปิดโปรแกรม
+- `RobloxRejoin.exe` — โปรแกรม Windows x64 แบบไฟล์เดียว รวม runtime ไว้แล้ว
+- `Program.cs` และ `RobloxRejoin.csproj` — source code และ project สำหรับ build
 - `วิธีใช้งาน.txt` — คู่มือภาษาไทย
 
 ## English
 
-A neon-themed, web-style dashboard for launching **Anime Adventures** and monitors Roblox Player and internet connectivity. It attempts to rejoin the experience if Roblox closes or the internet disconnects and comes back.
+A neon-themed, web-style dashboard that launches **Anime Adventures** and monitors Roblox Player and internet connectivity. It attempts to rejoin the experience if Roblox closes or the internet disconnects and comes back.
 
 ### How to use
 
 1. Install Roblox Player and sign in.
 2. Download the repository ZIP and extract it.
-3. Double-click `Start Auto Join.bat`.
+3. Double-click `RobloxRejoin.exe`.
 4. Click **Start monitoring**. The app checks for an existing Roblox Player first and will not launch a duplicate.
 5. Use the **EN / ไทย** button in the top-right corner to switch languages.
 6. Click **Stop monitoring** when you want to stop.
@@ -54,6 +54,6 @@ A neon-themed, web-style dashboard for launching **Anime Adventures** and monito
 
 ### Included files
 
-- `AutoJoinRoblox.ps1` — app and control window
-- `Start Auto Join.bat` — app launcher
+- `RobloxRejoin.exe` — standalone Windows x64 app; the .NET runtime is included
+- `Program.cs` and `RobloxRejoin.csproj` — source code and build project
 - `วิธีใช้งาน.txt` — Thai user guide
