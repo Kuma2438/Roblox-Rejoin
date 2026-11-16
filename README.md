@@ -2,7 +2,7 @@
 
 ## ภาษาไทย
 
-โปรแกรม Windows สำหรับเข้าเกม **Anime Adventures** และเฝ้าดูการทำงานของ Roblox Player กับการเชื่อมต่ออินเทอร์เน็ต เมื่อ Roblox ปิดหรืออินเทอร์เน็ตขาดแล้วกลับมา โปรแกรมจะพยายามเข้าเกมใหม่
+โปรแกรม Windows ธีม neon สำหรับเข้าเกม **Anime Adventures** และเฝ้าดูการทำงานของ Roblox Player กับการเชื่อมต่ออินเทอร์เน็ต เมื่อ Roblox ปิดหรืออินเทอร์เน็ตขาดแล้วกลับมา โปรแกรมจะพยายามเข้าเกมใหม่
 
 ### วิธีใช้งาน
 
@@ -31,7 +31,7 @@
 
 ## English
 
-A Windows utility that launches **Anime Adventures** and monitors Roblox Player and internet connectivity. It attempts to rejoin the experience if Roblox closes or the internet disconnects and comes back.
+A neon-themed Windows utility that launches **Anime Adventures** and monitors Roblox Player and internet connectivity. It attempts to rejoin the experience if Roblox closes or the internet disconnects and comes back.
 
 ### How to use
 
