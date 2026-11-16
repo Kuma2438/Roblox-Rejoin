@@ -15,4 +15,7 @@
     <DebugSymbols>false</DebugSymbols>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\aa-cover.png" LogicalName="RobloxRejoin.aa-cover.png" />
+  </ItemGroup>
 </Project>

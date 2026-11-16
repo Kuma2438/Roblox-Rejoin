@@ -198,8 +198,8 @@ namespace RobloxRejoin
 
     internal sealed class RejoinForm : Form
     {
-        private static readonly Color Back = Color.FromArgb(6, 7, 9);
-        private static readonly Color Card = Color.FromArgb(15, 17, 21);
+        private static readonly Color Back = Color.FromArgb(9, 10, 12);
+        private static readonly Color Card = Color.FromArgb(18, 20, 23);
         private static readonly Color Muted = Color.FromArgb(113, 113, 122);
         private static readonly Color Bright = Color.FromArgb(255, 255, 255);
         private static readonly Color Cyan = Color.FromArgb(20, 184, 166);
@@ -294,14 +294,14 @@ namespace RobloxRejoin
                 Location = new Point(22, 14), Size = new Size(38, 38),
                 BackColor = Color.FromArgb(16, 185, 129), BorderColor = Color.FromArgb(72, 221, 178), Radius = 12
             };
-            var logoText = Label("●", 10, FontStyle.Bold, Color.White, ContentAlignment.MiddleCenter);
+            var logoText = Label("R", 15, FontStyle.Bold, Color.White, ContentAlignment.MiddleCenter);
             logoText.Dock = DockStyle.Fill;
             logo.Controls.Add(logoText);
             header.Controls.Add(logo);
             HookDrag(logo);
             HookDrag(logoText);
 
-            var brand = Label("BRAND", 11, FontStyle.Bold, Bright);
+            var brand = Label("REJOIN", 11, FontStyle.Bold, Bright);
             brand.Location = new Point(72, 13);
             brand.Size = new Size(112, 18);
             header.Controls.Add(brand);
@@ -312,7 +312,7 @@ namespace RobloxRejoin
                 Location = new Point(190, 18), Size = new Size(48, 29),
                 BackColor = Color.FromArgb(28, 24, 42), BorderColor = Color.FromArgb(80, 62, 125), Radius = 11
             };
-            var aaTabText = Label("TAB", 8, FontStyle.Bold, Color.FromArgb(190, 164, 255), ContentAlignment.MiddleCenter);
+            var aaTabText = Label("AA", 9, FontStyle.Bold, Color.FromArgb(190, 164, 255), ContentAlignment.MiddleCenter);
             aaTabText.Dock = DockStyle.Fill;
             aaTab.Controls.Add(aaTabText);
             header.Controls.Add(aaTab);
@@ -364,9 +364,7 @@ namespace RobloxRejoin
 
             var shell = new TableLayoutPanel
             {
-                Dock = DockStyle.None, Location = new Point(0, 68), Size = new Size(ClientSize.Width, ClientSize.Height - 68),
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                BackColor = Back, ColumnCount = 2, RowCount = 1,
+                Dock = DockStyle.Fill, BackColor = Back, ColumnCount = 2, RowCount = 1,
                 Margin = Padding.Empty, Padding = Padding.Empty
             };
             shell.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 232));
@@ -394,7 +392,7 @@ namespace RobloxRejoin
             side.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
             sidebar.Controls.Add(side);
 
-            var sideBrand = Label("MODULE / TITLE", 9, FontStyle.Bold, Bright);
+            var sideBrand = Label("REJOIN  /  AA", 10, FontStyle.Bold, Bright);
             sideBrand.Dock = DockStyle.Fill;
             side.Controls.Add(sideBrand, 0, 0);
             var navHeading = Label(T("เมนูหลัก", "WORKSPACE"), 7, FontStyle.Bold, Color.FromArgb(91, 99, 108));
@@ -407,7 +405,7 @@ namespace RobloxRejoin
             activeNav.Controls.Add(activeNavLabel);
             side.Controls.Add(activeNav, 0, 2);
             var gameNav = new SoftCard { Dock = DockStyle.Fill, Margin = new Padding(0, 2, 0, 4), BackColor = Color.Transparent, BorderColor = Color.Transparent, Radius = 12 };
-            var gameNavLabel = Label("◈     MODULE", 8, FontStyle.Bold, Muted);
+            var gameNavLabel = Label("◈     ANIME ADVENTURES", 7, FontStyle.Bold, Muted);
             gameNavLabel.Dock = DockStyle.Fill;
             gameNavLabel.Padding = new Padding(12, 0, 0, 0);
             gameNav.Controls.Add(gameNavLabel);
@@ -444,11 +442,11 @@ namespace RobloxRejoin
             crumb.Location = new Point(2, 0);
             crumb.Size = new Size(400, 18);
             pageHead.Controls.Add(crumb);
-            var pageTitle = Label("Dashboard", 22, FontStyle.Bold, Bright);
+            var pageTitle = Label(T("ศูนย์ควบคุม", "Control center"), 22, FontStyle.Bold, Bright);
             pageTitle.Location = new Point(0, 20);
             pageTitle.Size = new Size(460, 40);
             pageHead.Controls.Add(pageTitle);
-            var pageSub = Label("Subtitle · Placeholder", 8, FontStyle.Regular, Muted);
+            var pageSub = Label(T("จัดการการเชื่อมต่อและการเข้าเกมของคุณ", "Manage your connection and game session"), 8, FontStyle.Regular, Muted);
             pageSub.Location = new Point(2, 54);
             pageSub.Size = new Size(520, 18);
             pageHead.Controls.Add(pageSub);
@@ -461,35 +459,36 @@ namespace RobloxRejoin
 
             var hero = new SoftCard { Dock = DockStyle.Fill, Margin = new Padding(0, 0, 8, 0), BackColor = Card, BorderColor = Color.FromArgb(37, 255, 255, 255), Radius = 18, ShowPattern = true };
             grid.Controls.Add(hero, 0, 0);
-            _experienceLabel = Label("MODULE TITLE", 7, FontStyle.Bold, Color.FromArgb(110, 231, 183));
+            _experienceLabel = Label(T("เกมที่เลือก", "SELECTED EXPERIENCE"), 7, FontStyle.Bold, Color.FromArgb(110, 231, 183));
             _experienceLabel.Location = new Point(22, 17);
             _experienceLabel.Size = new Size(250, 18);
             hero.Controls.Add(_experienceLabel);
 
             var gameMark = new SoftCard { Location = new Point(22, 48), Size = new Size(190, 124), BackColor = Color.FromArgb(26, 28, 33), BorderColor = Color.FromArgb(50, 255, 255, 255), Radius = 14 };
-                        gameMark.Paint += (_, e) =>
+            using (var coverStream = typeof(RejoinForm).Assembly.GetManifestResourceStream("RobloxRejoin.aa-cover.png"))
+            using (var coverImage = Image.FromStream(coverStream))
             {
-                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var pen = new Pen(Color.FromArgb(40, 16, 185, 129), 2f)) e.Graphics.DrawEllipse(pen, 62, 22, 66, 66);
-                using (var pen = new Pen(Color.FromArgb(175, 16, 185, 129), 3f)) e.Graphics.DrawArc(pen, 62, 22, 66, 66, -90, 225);
-                using (var pen = new Pen(Color.FromArgb(45, 139, 92, 246), 1f)) e.Graphics.DrawLine(pen, 20, 100, 168, 100);
-            };
-            hero.Controls.Add(gameMark);  _gameTitle = Label("Module Title", 17, FontStyle.Bold, Bright);
+                var cover = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.StretchImage, Image = new Bitmap(coverImage), BackColor = Color.FromArgb(24, 25, 31) };
+                gameMark.Controls.Add(cover);
+            }
+            hero.Controls.Add(gameMark);
+
+            _gameTitle = Label("Anime Adventures", 17, FontStyle.Bold, Bright);
             _gameTitle.Location = new Point(232, 56);
             _gameTitle.Size = new Size(300, 30);
             _gameTitle.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             hero.Controls.Add(_gameTitle);
-            _gameId = Label("Subtitle", 8, FontStyle.Regular, Muted);
+            _gameId = Label("ROBLOX EXPERIENCE   ·   8304191830", 7, FontStyle.Regular, Muted);
             _gameId.Location = new Point(234, 91);
             _gameId.Size = new Size(300, 22);
             _gameId.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             hero.Controls.Add(_gameId);
-            _gameBadge = Label("STATUS", 7, FontStyle.Bold, Color.FromArgb(110, 231, 183), ContentAlignment.MiddleCenter);
+            _gameBadge = Label("READY", 7, FontStyle.Bold, Color.FromArgb(110, 231, 183), ContentAlignment.MiddleCenter);
             _gameBadge.BackColor = Color.FromArgb(20, 46, 39);
             _gameBadge.Location = new Point(234, 124);
             _gameBadge.Size = new Size(75, 25);
             hero.Controls.Add(_gameBadge);
-            _gameHint = Label("Placeholder description", 8, FontStyle.Regular, Muted);
+            _gameHint = Label(T("พร้อมเชื่อมต่อกลับอัตโนมัติ", "Auto rejoin is standing by"), 8, FontStyle.Regular, Muted);
             _gameHint.Location = new Point(22, 186);
             _gameHint.Size = new Size(360, 18);
             hero.Controls.Add(_gameHint);
@@ -511,10 +510,10 @@ namespace RobloxRejoin
             statusStack.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3f));
             statusStack.RowStyles.Add(new RowStyle(SizeType.Percent, 33.4f));
             grid.Controls.Add(statusStack, 1, 0);
-            var netCard = BuildIndicator("STATUS LABEL", out _internetDot, out _internetValue, out _internetDetail);
+            var netCard = BuildIndicator(T("อินเทอร์เน็ต", "INTERNET"), out _internetDot, out _internetValue, out _internetDetail);
             netCard.Margin = new Padding(0, 0, 0, 6);
             statusStack.Controls.Add(netCard, 0, 0);
-            var robloxCard = BuildIndicator("STATUS LABEL", out _robloxDot, out _robloxValue, out _robloxDetail);
+            var robloxCard = BuildIndicator("ROBLOX PLAYER", out _robloxDot, out _robloxValue, out _robloxDetail);
             robloxCard.Margin = new Padding(0, 3, 0, 3);
             statusStack.Controls.Add(robloxCard, 0, 1);
             var note = new SoftCard { Dock = DockStyle.Fill, Margin = new Padding(0, 6, 0, 0), BackColor = Color.FromArgb(19, 18, 27), BorderColor = Color.FromArgb(56, 45, 77), Radius = 16, ShowPattern = true };
@@ -531,11 +530,11 @@ namespace RobloxRejoin
 
             var activity = new SoftCard { Dock = DockStyle.Fill, Margin = new Padding(0), BackColor = Card, BorderColor = Color.FromArgb(37, 255, 255, 255), Radius = 18, Padding = new Padding(20, 15, 20, 12) };
             content.Controls.Add(activity, 0, 2);
-            _activityTitle = Label("Activity", 12, FontStyle.Bold, Bright);
+            _activityTitle = Label(T("กิจกรรมล่าสุด", "Recent activity"), 12, FontStyle.Bold, Bright);
             _activityTitle.Location = new Point(20, 15);
             _activityTitle.Size = new Size(320, 23);
             activity.Controls.Add(_activityTitle);
-            _activitySubtitle = Label("Placeholder activity list", 7, FontStyle.Regular, Muted);
+            _activitySubtitle = Label(T("สถานะการเชื่อมต่อและกิจกรรมเกม", "Connection and game events"), 7, FontStyle.Regular, Muted);
             _activitySubtitle.Location = new Point(21, 39);
             _activitySubtitle.Size = new Size(400, 17);
             activity.Controls.Add(_activitySubtitle);
@@ -555,8 +554,6 @@ namespace RobloxRejoin
             _ambientTimer.Start();
             Resize += (_, __) =>
             {
-                shell.Location = new Point(0, header.Height);
-                shell.Size = new Size(ClientSize.Width, ClientSize.Height - header.Height);
                 if (WindowState == FormWindowState.Maximized) Region = null; else ApplyRoundedControls();
                 _languageButton.Location = new Point(ClientSize.Width - 202, 18);
                 _maximizeButton.Location = new Point(ClientSize.Width - 148, 18);
@@ -595,13 +592,13 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
                 BorderColor = Color.FromArgb(37, 40, 49), Radius = 16
             };
             var header = Label(heading, 7, FontStyle.Bold, Muted);
-            if (_internetHeading == null) _internetHeading = header;
+            if (heading.Contains("INTERNET") || heading.Contains("อินเทอร์เน็ต")) _internetHeading = header;
             else _robloxHeading = header;
             header.Location = new Point(14, 12);
             header.Size = new Size(160, 17);
             card.Controls.Add(header);
 
-            dot = new Panel { Size = new Size(7, 7), BackColor = Color.FromArgb(78, 84, 92), Location = new Point(15, 42) };
+            dot = new Panel { Size = new Size(7, 7), BackColor = Red, Location = new Point(15, 42) };
             var dotControl = dot;
             dotControl.Paint += (_, e) =>
             {
@@ -610,12 +607,12 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
             };
             card.Controls.Add(dotControl);
 
-            value = Label("STATUS LABEL", 9, FontStyle.Bold, Muted);
+            value = Label(T("ออฟไลน์", "Offline"), 11, FontStyle.Bold, Red);
             value.Location = new Point(29, 35);
             value.Size = new Size(150, 24);
             card.Controls.Add(value);
 
-            detail = Label("Placeholder", 7, FontStyle.Regular, Muted);
+            detail = Label(T("รอเริ่มตรวจสอบ", "Waiting to monitor"), 7, FontStyle.Regular, Muted);
             detail.Location = new Point(14, 69);
             detail.Size = new Size(166, 20);
             card.Controls.Add(detail);
@@ -655,63 +652,70 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
 
         private string T(string thai, string english) => _english ? english : thai;
 
-                private void ApplyLanguage()
+        private void ApplyLanguage()
         {
             _languageButton.Text = _english ? "TH" : "EN";
-            _subtitle.Text = "PLACEHOLDER";
-            _experienceLabel.Text = "MODULE TITLE";
-            _gameHint.Text = "Placeholder description";
-            _noteTitle.Text = "MODULE";
-            _noteText.Text = "Placeholder content for an abstract information card.";
-            _activitySubtitle.Text = "Placeholder activity list";
-            _gameId.Text = "Subtitle";
-            _gameBadge.Text = "STATUS LABEL";
-            _startButton.Text = _english ? "START   ›" : "เริ่มทำงาน   ›";
-            _stopButton.Text = _english ? "STOP" : "หยุดทำงาน";
-            _activityTitle.Text = "Activity";
-            _internetHeading.Text = "STATUS LABEL";
-            _robloxHeading.Text = "STATUS LABEL";
-            _mainStatus.Text = _monitoring ? "ACTIVE" : "STATUS LABEL";
-            _mainDetail.Text = "Placeholder";
-            _internetValue.Text = "STATUS LABEL";
-            _robloxValue.Text = "STATUS LABEL";
-            _internetDetail.Text = "Placeholder";
-            _robloxDetail.Text = "Placeholder";
+            _subtitle.Text = T("ศูนย์ควบคุม", "CONTROL CENTER");
+            _experienceLabel.Text = T("ประสบการณ์ของคุณ", "YOUR EXPERIENCE");
+            _gameHint.Text = T("พร้อมเชื่อมต่อกลับอัตโนมัติ", "Auto rejoin is standing by");
+            _noteTitle.Text = T("เข้าเกมอัตโนมัติ", "AUTO REJOIN");
+            _noteText.Text = T("เมื่อเน็ตหลุดหรือ Roblox กลับหน้าแอป โปรแกรมจะพยายามเข้าเกมใหม่", "Rejoins after an outage or a return to the Roblox app.");
+            _activitySubtitle.Text = T("สถานะการเชื่อมต่อและกิจกรรมเกม", "Connection and game events");
+            _gameId.Text = T("ประสบการณ์ Roblox  ·  Place ID 8304191830", "Roblox experience  ·  Place ID 8304191830");
+            _gameBadge.Text = _monitoring ? T("กำลังทำงาน", "ACTIVE") : T("พร้อมใช้งาน", "READY");
+            _startButton.Text = T("เริ่มทำงาน   ›", "START   ›");
+            _stopButton.Text = T("หยุดทำงาน", "STOP");
+            _activityTitle.Text = T("กิจกรรมล่าสุด", "Recent activity");
+            _internetHeading.Text = T("อินเทอร์เน็ต", "INTERNET");
+            _robloxHeading.Text = "ROBLOX PLAYER";
+            _mainStatus.Text = _monitoring ? T("กำลังทำงาน", "Running") : T("หยุดทำงาน", "Stopped");
+            _mainDetail.Text = _monitoring
+                ? T("ตรวจสอบ Roblox และอินเทอร์เน็ตทุก 10 วินาที", "Roblox and internet are checked every 10 seconds")
+                : T("กดเริ่มทำงานเพื่อเชื่อมต่อ Anime Adventures", "Press Start to connect to Anime Adventures");
+            _internetValue.Text = _internetValue.ForeColor == Green ? T("ออนไลน์", "Online") : T("ออฟไลน์", "Offline");
+            _robloxValue.Text = _robloxValue.ForeColor == Green ? T("ออนไลน์", "Online") : T("ออฟไลน์", "Offline");
         }
 
         private void SetMainStatus(string titleThai, string titleEnglish, string detailThai, string detailEnglish, Color color)
         {
-            _mainStatus.Text = "STATUS LABEL";
-            _mainStatus.ForeColor = _monitoring ? Green : Muted;
-            _mainDot.BackColor = _monitoring ? Green : Color.FromArgb(78, 84, 92);
+            _mainStatus.Text = T(titleThai, titleEnglish);
+            _mainStatus.ForeColor = color;
+            _mainDot.BackColor = color;
             _mainDot.Invalidate();
-            _mainDetail.Text = "Placeholder";
-            _gameBadge.Text = _monitoring ? "ACTIVE" : "STATUS LABEL";
+            _mainDetail.Text = T(detailThai, detailEnglish);
+            _gameBadge.Text = _monitoring ? T("กำลังทำงาน", "ACTIVE") : T("พร้อมใช้งาน", "READY");
         }
 
         private void SetIndicator(bool online, Label value, Label detail, Panel dot, string detailThai, string detailEnglish)
         {
-            value.Text = "STATUS LABEL";
-            value.ForeColor = Muted;
-            dot.BackColor = online ? Green : Color.FromArgb(69, 75, 84);
+            value.Text = online ? T("ออนไลน์", "Online") : T("ออฟไลน์", "Offline");
+            value.ForeColor = online ? Green : Red;
+            dot.BackColor = online ? Green : Red;
             dot.Invalidate();
-            detail.Text = "Placeholder";
+            detail.Text = T(detailThai, detailEnglish);
         }
 
         private void AddActivity(string thai, string english)
         {
-            var row = new Panel { Width = Math.Max(300, _activityList.ClientSize.Width - 28), Height = 46, BackColor = Card, Margin = new Padding(0, 0, 0, 2) };
-            var time = Label("···", 8, FontStyle.Regular, Muted);
+            var row = new Panel
+            {
+                Width = Math.Max(300, _activityList.ClientSize.Width - 28),
+                Height = 62, BackColor = Card, Margin = new Padding(0, 0, 0, 2)
+            };
+            var time = Label(DateTime.Now.ToString("HH:mm"), 8, FontStyle.Regular, Muted);
             time.Location = new Point(2, 8);
             time.Size = new Size(48, 20);
             row.Controls.Add(time);
-            var marker = new Panel { BackColor = Green, Location = new Point(60, 11), Size = new Size(6, 6) };
+
+            var marker = new Panel { BackColor = Color.FromArgb(54, 62, 76), Location = new Point(60, 11), Size = new Size(6, 6) };
             row.Controls.Add(marker);
-            var message = Label("Placeholder activity", 9, FontStyle.Regular, Color.FromArgb(224, 228, 236));
+
+            var message = Label(T(thai, english), 9, FontStyle.Regular, Color.FromArgb(224, 228, 236));
             message.Location = new Point(78, 4);
-            message.Size = new Size(Math.Max(180, row.Width - 92), 36);
+            message.Size = new Size(Math.Max(180, row.Width - 92), 46);
             row.Controls.Add(message);
             row.Resize += (_, __) => message.Width = Math.Max(180, row.Width - 92);
+
             _activityList.Controls.Add(row);
             while (_activityList.Controls.Count > 36)
             {
@@ -721,7 +725,8 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
             }
             _activityList.ScrollControlIntoView(row);
         }
-private void StartMonitoring(object sender, EventArgs e)
+
+        private void StartMonitoring(object sender, EventArgs e)
         {
             if (_monitoring) return;
             _monitoring = true;
