@@ -118,6 +118,8 @@ namespace RobloxRejoin
         private readonly Color _baseColor;
         private readonly Color _hoverColor;
         private Point _pointer;
+        private float _hoverProgress;
+        private readonly System.Windows.Forms.Timer _motionTimer;
 
         public AccentButton(string text, Color baseColor, Color hoverColor)
         {
@@ -131,9 +133,26 @@ namespace RobloxRejoin
             Cursor = Cursors.Hand;
             TextAlign = ContentAlignment.MiddleCenter;
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-            MouseEnter += (_, __) => { _hover = true; Invalidate(); };
-            MouseLeave += (_, __) => { _hover = false; Invalidate(); };
+            _motionTimer = new System.Windows.Forms.Timer { Interval = 16 };
+            _motionTimer.Tick += (_, __) =>
+            {
+                _hoverProgress += ((_hover ? 1f : 0f) - _hoverProgress) * 0.28f;
+                if (Math.Abs((_hover ? 1f : 0f) - _hoverProgress) < 0.015f)
+                {
+                    _hoverProgress = _hover ? 1f : 0f;
+                    _motionTimer.Stop();
+                }
+                Invalidate();
+            };
+            MouseEnter += (_, __) => { _hover = true; _motionTimer.Start(); };
+            MouseLeave += (_, __) => { _hover = false; _motionTimer.Start(); };
             MouseMove += (_, e) => { _pointer = e.Location; Invalidate(); };
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) _motionTimer.Dispose();
+            base.Dispose(disposing);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -141,9 +160,9 @@ namespace RobloxRejoin
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             var bounds = new Rectangle(0, 0, Width - 1, Height - 1);
             e.Graphics.Clear(Parent?.BackColor ?? Color.FromArgb(12, 13, 16));
-            var pullX = _hover ? (int)Math.Round((_pointer.X - Width / 2.0) / Math.Max(1, Width) * 4.0) : 0;
-            var pullY = _hover ? (int)Math.Round((_pointer.Y - Height / 2.0) / Math.Max(1, Height) * 4.0) : 0;
-            var scale = _hover ? 1.02f : 1f;
+            var pullX = (int)Math.Round((_pointer.X - Width / 2.0) / Math.Max(1, Width) * 4.0 * _hoverProgress);
+            var pullY = (int)Math.Round((_pointer.Y - Height / 2.0) / Math.Max(1, Height) * 4.0 * _hoverProgress);
+            var scale = 1f + 0.02f * _hoverProgress;
             var faceWidth = Math.Max(1, (int)((Width - 5) * scale));
             var faceHeight = Math.Max(1, (int)((Height - 5) * scale));
             var face = new Rectangle((Width - faceWidth) / 2 + pullX, (Height - faceHeight) / 2 + pullY, faceWidth, faceHeight);
@@ -152,15 +171,15 @@ namespace RobloxRejoin
                 using (var brush = new LinearGradientBrush(face, _hover ? _hoverColor : _baseColor,
                            _hover ? _baseColor : _hoverColor, LinearGradientMode.Horizontal))
                     e.Graphics.FillPath(brush, path);
-                if (_hover)
+                if (_hoverProgress > 0.01f)
                 {
-                    using (var edge = new Pen(Color.FromArgb(100, 255, 255, 255), 1f)) e.Graphics.DrawPath(edge, path);
+                    using (var edge = new Pen(Color.FromArgb((int)(100 * _hoverProgress), 255, 255, 255), 1f)) e.Graphics.DrawPath(edge, path);
                     using (var glowPath = new GraphicsPath())
                     {
                         glowPath.AddEllipse(_pointer.X - 90 + pullX, _pointer.Y - 90 + pullY, 180, 180);
                         using (var glow = new PathGradientBrush(glowPath)
                         {
-                            CenterColor = Color.FromArgb(44, 255, 255, 255),
+                            CenterColor = Color.FromArgb((int)(44 * _hoverProgress), 255, 255, 255),
                             SurroundColors = new[] { Color.FromArgb(0, 255, 255, 255) }
                         })
                         {
@@ -644,7 +663,7 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
             _activitySubtitle.Text = T("สถานะการเชื่อมต่อและกิจกรรมเกม", "Connection and game events");
             _gameId.Text = T("ประสบการณ์ Roblox  ·  Place ID 8304191830", "Roblox experience  ·  Place ID 8304191830");
             _gameBadge.Text = _monitoring ? T("กำลังทำงาน", "ACTIVE") : T("พร้อมใช้งาน", "READY");
-            _startButton.Text = T("เริ่มทำงาน", "START");
+            _startButton.Text = T("เริ่มทำงาน   ›", "START   ›");
             _stopButton.Text = T("หยุดทำงาน", "STOP");
             _activityTitle.Text = T("กิจกรรมล่าสุด", "Recent activity");
             _internetHeading.Text = T("อินเทอร์เน็ต", "INTERNET");
