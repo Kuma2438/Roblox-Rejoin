@@ -225,6 +225,7 @@ namespace RobloxRejoin
         private string _sessionLogState = "unknown";
         private bool _sessionSawPlay;
         private string _sessionEventKey;
+        private string _handledDisconnectEventKey;
 
         private Label _subtitle;
         private Label _experienceLabel;
@@ -855,6 +856,21 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
 
                 players = GetPlayerIds();
                 var session = await Task.Run(ReadSessionState);
+                if (players.Length > 0 && session != null && session.State == "disconnected-277")
+                {
+                    var disconnectKey = session.Path + "|" + session.EventKey;
+                    if (disconnectKey != _handledDisconnectEventKey)
+                    {
+                        _handledDisconnectEventKey = disconnectKey;
+                        AddActivity("ตรวจพบการตัดการเชื่อมต่อ รหัส 277 กำลังเข้าเกมใหม่",
+                            "Disconnected with error 277; rejoining");
+                        StopPlayers(players);
+                        await Task.Delay(1200);
+                        _everSawPlayer = false;
+                        LaunchGame();
+                    }
+                    return;
+                }
                 if (players.Length > 0 && session != null && session.State == "app-after-play" && !string.IsNullOrEmpty(session.EventKey))
                 {
                     var key = session.Path + "|" + session.EventKey;
@@ -1006,6 +1022,13 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
 
                 foreach (var line in lines)
                 {
+                    if (line.Contains("Error Code: 277", StringComparison.OrdinalIgnoreCase)
+                        || line.Contains("ErrorCode: 277", StringComparison.OrdinalIgnoreCase)
+                        || line.Contains("DisconnectCode=277", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _sessionLogState = "disconnected-277";
+                        _sessionEventKey = line;
+                    }
                     if (line.Contains("[FLog::SessionTransitionFSM] Entered play session.", StringComparison.Ordinal))
                     {
                         _sessionSawPlay = true;
