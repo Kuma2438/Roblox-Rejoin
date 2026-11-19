@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -226,6 +227,7 @@ namespace RobloxRejoin
         private bool _sessionSawPlay;
         private string _sessionEventKey;
         private string _handledDisconnectEventKey;
+        private DateTime _lastDialogReconnect = DateTime.MinValue;
 
         private Label _subtitle;
         private Label _experienceLabel;
@@ -855,6 +857,19 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
                 }
 
                 players = GetPlayerIds();
+                if (players.Length > 0 && (DateTime.Now - _lastDialogReconnect).TotalSeconds >= 90
+                    && await Task.Run(HasDisconnectDialog))
+                {
+                    _lastDialogReconnect = DateTime.Now;
+                    AddActivity("ตรวจพบหน้าต่างตัดการเชื่อมต่อ กำลังเข้าเกมใหม่",
+                        "Disconnected dialog detected; rejoining");
+                    StopPlayers(players);
+                    await Task.Delay(1200);
+                    _everSawPlayer = false;
+                    LaunchGame();
+                    return;
+                }
+
                 var session = await Task.Run(ReadSessionState);
                 if (players.Length > 0 && session != null && session.State == "disconnected-session")
                 {
@@ -967,6 +982,60 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
             }
             catch { return Array.Empty<int>(); }
         }
+
+        private static bool HasDisconnectDialog()
+        {
+            foreach (var id in GetPlayerIds())
+            {
+                try
+                {
+                    using (var process = Process.GetProcessById(id))
+                    {
+                        var handle = process.MainWindowHandle;
+                        if (handle == IntPtr.Zero || !GetClientRect(handle, out var rect)) continue;
+                        var topLeft = new NativePoint { X = rect.Left, Y = rect.Top };
+                        if (!ClientToScreen(handle, ref topLeft)) continue;
+                        var width = rect.Right - rect.Left;
+                        var height = rect.Bottom - rect.Top;
+                        if (width < 400 || height < 300) continue;
+
+                        using (var bitmap = new Bitmap(width, height))
+                        using (var graphics = Graphics.FromImage(bitmap))
+                        {
+                            graphics.CopyFromScreen(topLeft.X, topLeft.Y, 0, 0, bitmap.Size);
+                            int gray = 0, samples = 0, white = 0, buttonSamples = 0;
+                            for (int y = (int)(height * 0.32); y < height * 0.74; y += 4)
+                            for (int x = (int)(width * 0.25); x < width * 0.75; x += 4)
+                            {
+                                var c = bitmap.GetPixel(x, y);
+                                if (c.R >= 42 && c.R <= 95 && c.G >= 42 && c.G <= 95 && c.B >= 42 && c.B <= 100
+                                    && Math.Abs(c.R - c.G) < 20 && Math.Abs(c.G - c.B) < 20) gray++;
+                                samples++;
+                            }
+                            for (int y = (int)(height * 0.61); y < height * 0.76; y += 3)
+                            for (int x = (int)(width * 0.50); x < width * 0.76; x += 3)
+                            {
+                                var c = bitmap.GetPixel(x, y);
+                                if (c.R > 225 && c.G > 225 && c.B > 225) white++;
+                                buttonSamples++;
+                            }
+                            return samples > 0 && buttonSamples > 0
+                                && gray / (double)samples > 0.32
+                                && white / (double)buttonSamples > 0.07;
+                        }
+                    }
+                }
+                catch { }
+            }
+            return false;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct NativeRect { public int Left, Top, Right, Bottom; }
+        [StructLayout(LayoutKind.Sequential)]
+        private struct NativePoint { public int X, Y; }
+        [DllImport("user32.dll")] private static extern bool GetClientRect(IntPtr hWnd, out NativeRect rect);
+        [DllImport("user32.dll")] private static extern bool ClientToScreen(IntPtr hWnd, ref NativePoint point);
 
         private static void StopPlayers(int[] playerIds)
         {
