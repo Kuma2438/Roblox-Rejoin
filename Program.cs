@@ -856,14 +856,14 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
 
                 players = GetPlayerIds();
                 var session = await Task.Run(ReadSessionState);
-                if (players.Length > 0 && session != null && session.State == "disconnected-277")
+                if (players.Length > 0 && session != null && session.State == "disconnected-session")
                 {
                     var disconnectKey = session.Path + "|" + session.EventKey;
                     if (disconnectKey != _handledDisconnectEventKey)
                     {
                         _handledDisconnectEventKey = disconnectKey;
-                        AddActivity("ตรวจพบการตัดการเชื่อมต่อ รหัส 277 กำลังเข้าเกมใหม่",
-                            "Disconnected with error 277; rejoining");
+                        AddActivity("ตรวจพบการตัดการเชื่อมต่อจาก log กำลังเข้าเกมใหม่",
+                            "Disconnect event found in Roblox log; rejoining");
                         StopPlayers(players);
                         await Task.Delay(1200);
                         _everSawPlayer = false;
@@ -1022,11 +1022,10 @@ private SoftCard BuildIndicator(string heading, out Panel dot, out Label value, 
 
                 foreach (var line in lines)
                 {
-                    if (line.Contains("Error Code: 277", StringComparison.OrdinalIgnoreCase)
-                        || line.Contains("ErrorCode: 277", StringComparison.OrdinalIgnoreCase)
-                        || line.Contains("DisconnectCode=277", StringComparison.OrdinalIgnoreCase))
+                    if (_sessionSawPlay && (line.Contains("Client:Disconnect", StringComparison.OrdinalIgnoreCase)
+                        || line.Contains("Disconnected - stop() called", StringComparison.OrdinalIgnoreCase)))
                     {
-                        _sessionLogState = "disconnected-277";
+                        _sessionLogState = "disconnected-session";
                         _sessionEventKey = line;
                     }
                     if (line.Contains("[FLog::SessionTransitionFSM] Entered play session.", StringComparison.Ordinal))
